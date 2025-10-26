@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Forum Diskusi</h2>
+
+<form method="post">
+    <input type="text" name="title" placeholder="Judul" required><br>
+    <textarea name="body" placeholder="Isi topik..." required></textarea><br>
+    <button type="submit">Kirim</button>
+</form>
+
+<hr>
+{% for post in posts %}
+<div>
+    <b>{{ post.title }}</b> oleh {{ post.username }}<br>
+    <p>{{ post.body }}</p>
+</div>
+<hr>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>{{ post['title'] }}</h3>
+<p>{{ post['body'] }}</p>
+<p><i>oleh {{ post['username'] }}</i></p>
+<hr>
+<h4>Komentar</h4>
+{% for c in comments %}
+  <div class="card">{{ c['body'] }} <br><small>oleh {{ c['username'] }}</small></div>
+{% else %}
+  <p>Belum ada komentar.</p>
+{% endfor %}
+<hr>
+<form method="post">
+  <textarea name="body" rows="3" cols="70" placeholder="Tulis komentar"></textarea><br>
+  <button>Kirim</button>
+</form>
+{% endblock %}

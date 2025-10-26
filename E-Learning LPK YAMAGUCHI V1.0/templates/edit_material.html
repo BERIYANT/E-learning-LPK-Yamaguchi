@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Edit Materi</h2>
+
+<form method="POST">
+  <label>Judul:</label><br>
+  <input type="text" name="title" value="{{ material.title }}" required><br><br>
+
+  <label>Konten:</label><br>
+  <textarea name="content" rows="8" required>{{ material.content }}</textarea><br><br>
+
+  <button type="submit">Simpan Perubahan</button>
+  <a href="{{ url_for('dashboard') }}">Batal</a>
+</form>
+{% endblock %}

@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{% block title %}Log Aktivitas{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2>Log Aktivitas</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Log Aktivitas</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Tab Navigation -->
+    <ul class="nav nav-tabs mb-4" id="activityTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="teacher-activity-tab" data-bs-toggle="tab" data-bs-target="#teacher-activity" type="button">
+                <i class="fas fa-chalkboard-teacher"></i> Aktivitas Guru
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="student-activity-tab" data-bs-toggle="tab" data-bs-target="#student-activity" type="button">
+                <i class="fas fa-user-graduate"></i> Aktivitas Siswa
+            </button>
+        </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content" id="activityTabContent">
+        <!-- AKTIVITAS GURU TAB -->
+        <div class="tab-pane fade show active" id="teacher-activity" role="tabpanel">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-history"></i> Riwayat Aktivitas Guru</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>No</th>
+                                    <th>Username</th>
+                                    <th>Nama Lengkap</th>
+                                    <th>Aktivitas</th>
+                                    <th>Detail</th>
+                                    <th>Waktu</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if teacher_activities %}
+                                    {% for activity in teacher_activities %}
+                                    <tr>
+                                        <td>{{ loop.index }}</td>
+                                        <td><strong>{{ activity.username }}</strong></td>
+                                        <td>{{ activity.full_name or '-' }}</td>
+                                        <td>
+                                            {% if 'Materi' in activity.activity %}
+                                                <span class="badge bg-info">{{ activity.activity }}</span>
+                                            {% elif 'Kuis' in activity.activity %}
+                                                <span class="badge bg-warning text-dark">{{ activity.activity }}</span>
+                                            {% elif 'Tugas' in activity.activity %}
+                                                <span class="badge bg-danger">{{ activity.activity }}</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">{{ activity.activity }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ activity.detail }}</td>
+                                        <td>
+                                            <small class="text-muted">
+                                                {{ activity.timestamp.strftime('%d/%m/%Y %H:%M') if activity.timestamp else '-' }}
+                                            </small>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted">Belum ada aktivitas guru</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AKTIVITAS SISWA TAB -->
+        <div class="tab-pane fade" id="student-activity" role="tabpanel">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-history"></i> Riwayat Aktivitas Siswa</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>No</th>
+                                    <th>Username</th>
+                                    <th>Nama Lengkap</th>
+                                    <th>Aktivitas</th>
+                                    <th>Detail</th>
+                                    <th>Waktu</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if student_activities %}
+                                    {% for activity in student_activities %}
+                                    <tr>
+                                        <td>{{ loop.index }}</td>
+                                        <td><strong>{{ activity.username }}</strong></td>
+                                        <td>{{ activity.full_name or '-' }}</td>
+                                        <td>
+                                            {% if 'Kuis' in activity.activity %}
+                                                <span class="badge bg-warning text-dark">{{ activity.activity }}</span>
+                                            {% elif 'Tugas' in activity.activity %}
+                                                <span class="badge bg-info">{{ activity.activity }}</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">{{ activity.activity }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ activity.detail }}</td>
+                                        <td>
+                                            <small class="text-muted">
+                                                {{ activity.timestamp.strftime('%d/%m/%Y %H:%M') if activity.timestamp else '-' }}
+                                            </small>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted">Belum ada aktivitas siswa</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Kembali ke Dashboard
+        </a>
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+<style>
+.table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+</style>
+{% endblock %}

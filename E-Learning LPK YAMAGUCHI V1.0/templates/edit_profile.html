@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Edit Profil{% endblock %}
+{% block content %}
+
+<div class="card shadow p-4">
+  <h3 class="mb-4">Edit Profil</h3>
+
+  <form method="post" enctype="multipart/form-data">
+    <div class="row">
+      <div class="col-md-4 text-center">
+        {% if user.avatar %}
+          <img src="{{ url_for('static', filename='uploads/' ~ user.avatar) }}" class="avatar mb-3" alt="Avatar">
+        {% else %}
+          <img src="{{ url_for('static', filename='default_avatar.png') }}" class="avatar mb-3" alt="Avatar Default">
+        {% endif %}
+        <input type="file" name="avatar" class="form-control">
+      </div>
+
+      <div class="col-md-8">
+        <div class="mb-3">
+          <label class="form-label">Nama Lengkap</label>
+          <input type="text" name="full_name" value="{{ user.full_name }}" class="form-control">
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Bio</label>
+          <textarea name="bio" class="form-control" rows="4">{{ user.bio }}</textarea>
+        </div>
+
+        <button type="submit" class="btn btn-success">Simpan Perubahan</button>
+        <a href="{{ url_for('profile') }}" class="btn btn-secondary">Batal</a>
+      </div>
+    </div>
+  </form>
+</div>
+
+{% endblock %}

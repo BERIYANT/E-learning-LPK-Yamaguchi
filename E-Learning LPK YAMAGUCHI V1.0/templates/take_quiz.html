@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>Mengerjakan: Kuis ID {{ quiz_id }}</h3>
+<form method="post" action="{{ url_for('take_quiz', qid=quiz_id) }}">
+  {% for q in questions %}
+    <div class="card">
+      <p><strong>{{ loop.index }}. {{ q.question }}</strong></p>
+      <label><input type="radio" name="q{{ q.id }}" value="A" required> A. {{ q.option_a }}</label><br>
+      <label><input type="radio" name="q{{ q.id }}" value="B" required> B. {{ q.option_b }}</label><br>
+      {% if q.option_c %}<label><input type="radio" name="q{{ q.id }}" value="C" required> C. {{ q.option_c }}</label><br>{% endif %}
+      {% if q.option_d %}<label><input type="radio" name="q{{ q.id }}" value="D" required> D. {{ q.option_d }}</label><br>{% endif %}
+    </div>
+  {% endfor %}
+  <button type="submit">Kirim Jawaban</button>
+</form>
+{% endblock %}

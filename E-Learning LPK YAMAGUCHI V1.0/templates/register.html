@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Registrasi Akun Baru</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <h2>Daftar Akun Baru</h2>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul class="flash">
+          {% for m in messages %}
+            <li>{{ m }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+      <label>Nama Lengkap</label>
+      <input type="text" name="full_name" required>
+
+      <label>Username</label>
+      <input type="text" name="username" required>
+
+      <label>Password</label>
+      <input type="password" name="password" required>
+
+      <label>Pilih Kelas</label>
+      <select name="class_id" required>
+        <option value="">-- Pilih Kelas --</option>
+        {% for c in classes %}
+          <option value="{{ c.id }}">{{ c.name }} — {{ c.schedule }}</option>
+        {% endfor %}
+      </select>
+
+      <label>Role</label>
+      <select name="role">
+        <option value="student">Siswa</option>
+        <option value="sensei">Sensei</option>
+      </select>
+
+      <button type="submit">Daftar</button>
+    </form>
+
+    <p>Sudah punya akun? <a href="{{ url_for('login') }}">Login di sini</a></p>
+  </div>
+</body>
+</html>

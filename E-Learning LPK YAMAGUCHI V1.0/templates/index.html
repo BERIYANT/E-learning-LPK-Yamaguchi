@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>Selamat Datang di LMS LPK Bahasa Jepang</h3>
+<p>Login sebagai <b>sensei/sensei123</b> atau <b>siswa/siswa123</b>.</p>
+
+<h4>Materi Terbaru:</h4>
+{% for m in materials %}
+  <div class="card">
+    <b>{{ m['title'] }}</b><br>
+    <a href="{{ url_for('view_material', mid=m['id']) }}">Baca</a>
+  </div>
+{% else %}
+  <p>Belum ada materi.</p>
+{% endfor %}
+{% endblock %}

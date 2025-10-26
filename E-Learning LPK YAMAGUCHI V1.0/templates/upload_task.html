@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+  <h2>📤 Kumpulkan Tugas</h2>
+  <p><strong>{{ task.title }}</strong></p>
+  <p class="text-muted">Deadline: {{ task.due_date }}</p>
+  <hr>
+
+  <form method="POST" enctype="multipart/form-data">
+    <div class="mb-3">
+      <label for="file" class="form-label">Upload File (PDF, DOCX, ZIP, dll)</label>
+      <input type="file" class="form-control" id="file" name="file" required>
+    </div>
+    <button type="submit" class="btn btn-success">Kirim Tugas</button>
+    <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Batal</a>
+  </form>
+</div>
+{% endblock %}

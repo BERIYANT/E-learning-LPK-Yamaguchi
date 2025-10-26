@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>Nilai Submisi Tugas</h3>
+<p>Pengirim: {{ sub.username }} | Submitted at: {{ sub.submitted_at }}</p>
+<p>File: <a href="{{ sub.file_path }}">Download</a></p>
+<form method="post" action="{{ url_for('grade_task_submission', sid=sub.id) }}">
+  <label>Grade (0-100): <input name="grade" type="number" min=0 max=100 required value="{{ sub.grade or '' }}"></label><br><br>
+  <button type="submit">Simpan</button>
+</form>
+{% endblock %}

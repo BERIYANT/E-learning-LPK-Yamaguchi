@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>Daftar Kuis</h3>
+{% for q in quizzes %}
+  <div class="card">
+    <strong>{{ q.title }}</strong><br>
+    <a href="{{ url_for('take_quiz', qid=q.id) }}">Kerjakan</a>
+    {% if g.user and g.user.role == 'sensei' %}
+      | <a href="{{ url_for('add_question', qid=q.id) }}">Tambah Pertanyaan</a>
+      | <a href="{{ url_for('quiz_submissions', qid=q.id) }}">Lihat Submisi</a>
+    {% endif %}
+  </div>
+{% else %}
+  <p>Tidak ada kuis.</p>
+{% endfor %}
+{% endblock %}

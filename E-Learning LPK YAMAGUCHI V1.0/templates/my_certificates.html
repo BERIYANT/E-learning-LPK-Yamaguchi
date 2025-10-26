@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Sertifikat Saya{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2>🎓 Sertifikat Saya</h2>
+            <p class="text-muted">Lihat sertifikat yang telah Anda peroleh</p>
+        </div>
+    </div>
+
+    {% if certificates %}
+    <div class="row">
+        {% for cert in certificates %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card certificate-card h-100">
+                <div class="card-header bg-gradient text-white text-center">
+                    <i class="fas fa-certificate fa-2x mb-2"></i>
+                    <h5 class="mb-0">Sertifikat</h5>
+                </div>
+                <div class="card-body">
+                    <h6 class="card-title text-center mb-3">
+                        <strong>{{ cert.certificate_number }}</strong>
+                    </h6>
+                    
+                    {% if cert.class_name %}
+                    <p class="text-center mb-2">
+                        <span class="badge bg-secondary">{{ cert.class_name }}</span>
+                    </p>
+                    {% endif %}
+
+                    {% if cert.description %}
+                    <p class="card-text text-muted small">
+                        {{ cert.description[:100] }}{% if cert.description|length > 100 %}...{% endif %}
+                    </p>
+                    {% endif %}
+
+                    <div class="cert-info mt-3">
+                        <p class="small mb-1">
+                            <i class="fas fa-calendar-alt"></i> 
+                            <strong>Tanggal Terbit:</strong>
+                        </p>
+                        <p class="small text-muted">
+                            {{ cert.issued_at.strftime('%d %B %Y') if cert.issued_at else '-' }}
+                        </p>
+                    </div>
+                </div>
+                <div class="card-footer text-center bg-white">
+                    <a href="{{ url_for('view_certificate', cert_id=cert.id) }}" 
+                       class="btn btn-primary btn-sm">
+                        <i class="fas fa-eye"></i> Lihat Sertifikat
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="row">
+        <div class="col">
+            <div class="alert alert-info text-center">
+                <i class="fas fa-info-circle fa-3x mb-3"></i>
+                <h5>Belum Ada Sertifikat</h5>
+                <p class="mb-0">Anda belum memiliki sertifikat. Terus belajar dan selesaikan kursus untuk mendapatkan sertifikat!</p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="mt-4">
+        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Kembali ke Dashboard
+        </a>
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+<style>
+.certificate-card {
+    transition: transform 0.3s, box-shadow 0.3s;
+    border: none;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.certificate-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.bg-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.cert-info {
+    border-top: 1px solid #eee;
+    padding-top: 15px;
+}
+</style>
+{% endblock %}

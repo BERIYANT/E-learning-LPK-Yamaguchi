@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Edit Kuis</h2>
+
+<form method="POST">
+  <label>Judul Kuis:</label><br>
+  <input type="text" name="title" value="{{ quiz.title }}" required><br><br>
+
+  <button type="submit">Simpan</button>
+  <a href="{{ url_for('dashboard') }}">Batal</a>
+</form>
+{% endblock %}

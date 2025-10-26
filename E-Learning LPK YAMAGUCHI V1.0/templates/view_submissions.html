@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Daftar Pengumpulan: {{ task.title }}</h2>
+
+<table border="1" cellpadding="6">
+    <tr>
+        <th>Nama Siswa</th>
+        <th>File</th>
+        <th>Waktu Submit</th>
+        <th>Nilai</th>
+        <th>Aksi</th>
+    </tr>
+    {% for s in submissions %}
+    <tr>
+        <td>{{ s.full_name }} ({{ s.username }})</td>
+        <td><a href="{{ url_for('static', filename=s.file_path.split('static/')[1]) }}" target="_blank">Lihat File</a></td>
+        <td>{{ s.submitted_at }}</td>
+        <td>{{ s.grade if s.grade is not none else 'Belum Dinilai' }}</td>
+        <td>
+            <a href="{{ url_for('grade_submission', sid=s.id) }}">Beri Nilai</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<a href="{{ url_for('dashboard') }}">← Kembali ke Dashboard</a>
+{% endblock %}

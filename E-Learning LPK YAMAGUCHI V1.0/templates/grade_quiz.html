@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>Nilai Submisi - {{ submission.username }}</h3>
+<p>Jawaban siswa sudah tersimpan (lihat tabel jawaban di backend).</p>
+<form method="post" action="{{ url_for('grade_quiz_submission', sid=submission.id) }}">
+  <label>Score (0-100): <input name="score" type="number" min="0" max="100" required value="{{ submission.score or '' }}"></label><br><br>
+  <button type="submit">Simpan Nilai</button>
+</form>
+<p><a href="{{ url_for('quiz_submissions', qid=submission.quiz_id) }}">Kembali ke submisi</a></p>
+{% endblock %}

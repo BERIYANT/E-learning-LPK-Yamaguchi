@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Hasil Kuis</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+        }
+        h2 {
+            color: #d63384;
+        }
+        table {
+            border-collapse: collapse;
+            margin-top: 15px;
+            width: 80%;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px 12px;
+            text-align: center;
+        }
+        th {
+            background-color: #f3f3f3;
+        }
+        .benar {
+            color: green;
+            font-weight: bold;
+        }
+        .salah {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<h2>🎯 Hasil Kuis: {{ quiz.title }}</h2>
+<p><b>Nilai Kamu:</b> {{ score.score if score else 'Belum ada nilai' }}</p>
+
+<h3>Rincian Jawaban</h3>
+<table>
+    <tr>
+        <th>Pertanyaan</th>
+        <th>Jawaban Kamu</th>
+        <th>Jawaban Benar</th>
+        <th>Status</th>
+    </tr>
+    {% for a in answers %}
+    <tr>
+        <td>{{ a.question }}</td>
+        <td>{{ a.selected_option|upper if a.selected_option else '-' }}</td>
+        <td>{{ a.correct_option|upper }}</td>
+        <td>
+            {% if a.is_correct %}
+                <span class="benar">✓ Benar</span>
+            {% else %}
+                <span class="salah">✗ Salah</span>
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<p><a href="{{ url_for('dashboard') }}">Kembali ke Dashboard</a></p>
+
+</body>
+</html>

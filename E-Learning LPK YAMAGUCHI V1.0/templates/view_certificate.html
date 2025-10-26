@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+
+{% block title %}Sertifikat - {{ cert.certificate_number }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                    {% if g.user.role == 'admin' %}
+                    <li class="breadcrumb-item"><a href="{{ url_for('admin_certificates') }}">Kelola Sertifikat</a></li>
+                    {% else %}
+                    <li class="breadcrumb-item"><a href="{{ url_for('my_certificates') }}">Sertifikat Saya</a></li>
+                    {% endif %}
+                    <li class="breadcrumb-item active">{{ cert.certificate_number }}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Certificate Display -->
+            <div class="certificate-container" id="certificate">
+                <div class="certificate-border">
+                    <div class="certificate-content">
+                        <div class="certificate-header">
+                            <h1 class="certificate-title">🎓 SERTIFIKAT</h1>
+                            <p class="certificate-subtitle">Certificate of Achievement</p>
+                        </div>
+
+                        <div class="certificate-body">
+                            <p class="certificate-text">Diberikan kepada / This is to certify that</p>
+                            <h2 class="student-name">{{ cert.full_name or cert.username }}</h2>
+                            
+                            {% if cert.class_name %}
+                            <p class="certificate-text mt-3">Kelas / Class: <strong>{{ cert.class_name }}</strong></p>
+                            {% endif %}
+
+                            {% if cert.description %}
+                            <p class="certificate-description mt-4">{{ cert.description }}</p>
+                            {% else %}
+                            <p class="certificate-description mt-4">
+                                Telah menyelesaikan program pembelajaran bahasa Jepang dengan baik
+                            </p>
+                            {% endif %}
+
+                            <div class="certificate-footer mt-5">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p class="mb-1"><strong>Nomor Sertifikat:</strong></p>
+                                        <p class="cert-number">{{ cert.certificate_number }}</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p class="mb-1"><strong>Tanggal Terbit:</strong></p>
+                                        <p class="cert-date">{{ cert.issued_at.strftime('%d %B %Y') if cert.issued_at else '-' }}</p>
+                                    </div>
+                                </div>
+
+                                <div class="signature-section mt-4">
+                                    <div class="signature">
+                                        <div class="signature-line"></div>
+                                        <p class="signature-name">LMS Jepang</p>
+                                        <p class="signature-title">Administrator</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="certificate-seal">
+                            <i class="fas fa-certificate fa-4x text-warning"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="text-center mt-4 no-print">
+                <button onclick="window.print()" class="btn btn-primary">
+                    <i class="fas fa-print"></i> Cetak Sertifikat
+                </button>
+                {% if g.user.role == 'admin' %}
+                <a href="{{ url_for('admin_certificates') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Kembali
+                </a>
+                {% else %}
+                <a href="{{ url_for('my_certificates') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Kembali
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+<style>
+.certificate-container {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+}
+
+.certificate-border {
+    border: 10px solid #fff;
+    border-radius: 10px;
+    background: white;
+    padding: 10px;
+}
+
+.certificate-content {
+    border: 3px solid #667eea;
+    padding: 50px 40px;
+    position: relative;
+    min-height: 600px;
+    background: linear-gradient(to bottom, #fff 0%, #f8f9ff 100%);
+}
+
+.certificate-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.certificate-title {
+    font-size: 48px;
+    font-weight: bold;
+    color: #667eea;
+    margin-bottom: 10px;
+    font-family: 'Georgia', serif;
+}
+
+.certificate-subtitle {
+    font-size: 18px;
+    color: #666;
+    font-style: italic;
+}
+
+.certificate-body {
+    text-align: center;
+}
+
+.certificate-text {
+    font-size: 18px;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+.student-name {
+    font-size: 36px;
+    font-weight: bold;
+    color: #333;
+    text-decoration: underline;
+    text-decoration-color: #667eea;
+    margin: 20px 0;
+    font-family: 'Georgia', serif;
+}
+
+.certificate-description {
+    font-size: 16px;
+    color: #666;
+    line-height: 1.8;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.certificate-footer {
+    margin-top: 50px;
+}
+
+.cert-number, .cert-date {
+    font-weight: bold;
+    color: #667eea;
+}
+
+.signature-section {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+}
+
+.signature {
+    text-align: center;
+    width: 250px;
+}
+
+.signature-line {
+    border-top: 2px solid #333;
+    margin-bottom: 10px;
+}
+
+.signature-name {
+    font-weight: bold;
+    font-size: 18px;
+    margin-bottom: 5px;
+}
+
+.signature-title {
+    color: #666;
+    font-size: 14px;
+}
+
+.certificate-seal {
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    opacity: 0.3;
+}
+
+/* Print Styles */
+@media print {
+    .no-print {
+        display: none !important;
+    }
+    
+    .container {
+        max-width: 100%;
+    }
+    
+    .certificate-container {
+        box-shadow: none;
+        page-break-inside: avoid;
+    }
+    
+    nav, .breadcrumb {
+        display: none;
+    }
+}
+</style>
+{% endblock %}

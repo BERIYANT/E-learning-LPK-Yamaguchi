@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>Submisi Tugas: {{ task.title }}</h3>
+{% for s in subs %}
+  <div class="card">
+    <strong>{{ s.username }}</strong> - {{ s.submitted_at }}<br>
+    File: <a href="{{ s.file_path }}">Download</a><br>
+    Grade: {{ s.grade if s.grade is not none else 'Belum' }} |
+    <a href="{{ url_for('grade_task_submission', sid=s.id) }}">Beri Nilai</a>
+  </div>
+{% else %}
+  <p>Tidak ada submisi.</p>
+{% endfor %}
+<p><a href="{{ url_for('dashboard') }}">Kembali</a></p>
+{% endblock %}
