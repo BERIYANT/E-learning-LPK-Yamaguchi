@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}Forum Diskusi{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">
+                        <i class="fas fa-comments"></i> Forum Diskusi
+                    </h4>
+                    <button type="button" class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#createPostModal">
+                        <i class="fas fa-plus"></i> Buat Topik Baru
+                    </button>
+                </div>
+
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Selamat datang di Forum Diskusi!</strong>
+                        Tempat berbagi ide, bertanya, dan berdiskusi tentang pembelajaran Bahasa Jepang.
+                    </div>
+
+                    <!-- Filter dan Search -->
+                    <div class="row mb-3">
+                        <div class="col-md-8">
+                            <form method="GET" action="{{ url_for('forum') }}">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" name="search"
+                                           placeholder="Cari topik diskusi..."
+                                           value="{{ request.args.get('search', '') }}">
+                                    <button class="btn btn-outline-primary" type="submit">
+                                        <i class="fas fa-search"></i> Cari
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-md-4">
+                            <form method="GET" action="{{ url_for('forum') }}">
+                                <select class="form-select" name="sort" onchange="this.form.submit()">
+                                    <option value="latest" {% if request.args.get('sort') == 'latest' %}selected{% endif %}>Terbaru</option>
+                                    <option value="oldest" {% if request.args.get('sort') == 'oldest' %}selected{% endif %}>Terlama</option>
+                                    <option value="popular" {% if request.args.get('sort') == 'popular' %}selected{% endif %}>Terpopuler</option>
+                                </select>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Daftar Postingan Forum -->
+                    {% if posts %}
+                        <div class="list-group">
+                            {% for post in posts %}
+                                <a href="{{ url_for('view_post', post_id=post.id) }}"
+                                   class="list-group-item list-group-item-action">
+                                    <div class="d-flex w-100 justify-content-between align-items-start">
+                                        <div class="flex-grow-1">
+                                            <h5 class="mb-1">
+                                                <i class="fas fa-comments text-primary"></i> {{ post.title }}
+                                            </h5>
+                                            <p class="mb-1 text-muted">
+                                                {{ post.body[:150] }}{% if post.body|length > 150 %}...{% endif %}
+                                            </p>
+                                            <small class="text-muted">
+                                                <i class="fas fa-user"></i>
+                                                {{ post.full_name or post.username }}
+                                                <i class="fas fa-clock ms-2"></i>
+                                                {{ post.created_at.strftime('%d %b %Y, %H:%M') if post.created_at else '-' }}
+                                            </small>
+                                        </div>
+                                        <div class="text-end ms-3">
+                                            <span class="badge bg-primary rounded-pill">
+                                                <i class="fas fa-reply"></i> {{ post.reply_count or 0 }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </a>
+                            {% endfor %}
+                        </div>
+
+                        {% if posts|length >= 20 %}
+                        <div class="text-center mt-3">
+                            <p class="text-muted">Menampilkan {{ posts|length }} topik diskusi</p>
+                        </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="alert alert-warning text-center">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            Belum ada topik diskusi. Jadilah yang pertama membuat topik!
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Buat Post Baru -->
+<div class="modal fade" id="createPostModal" tabindex="-1" aria-labelledby="createPostModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form method="POST" action="{{ url_for('forum') }}">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="createPostModalLabel">
+                        <i class="fas fa-plus-circle"></i> Buat Topik Diskusi Baru
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Judul Topik <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="title" name="title"
+                               placeholder="Contoh: Bagaimana cara menggunakan partikel は (wa)?"
+                               required maxlength="200">
+                        <div class="form-text">Buat judul yang jelas dan deskriptif.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="body" class="form-label">Isi Diskusi <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="body" name="body" rows="8"
+                                  placeholder="Jelaskan topik diskusi Anda secara detail..."
+                                  required></textarea>
+                        <div class="form-text">Berikan detail yang cukup agar diskusi berjalan produktif.</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times"></i> Batal
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i> Posting
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

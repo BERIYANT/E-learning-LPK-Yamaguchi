@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>Buat Materi Baru</h3>
+<form method="post">
+  Judul: <input name="title" required><br>
+  Konten:<br>
+  <textarea name="content" rows="6" cols="70"></textarea><br>
+  <button>Simpan</button>
+</form>
+{% endblock %}

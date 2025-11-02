@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}Profil Saya{% endblock %}
+{% block content %}
+
+<div class="card shadow p-4">
+  <div class="row">
+    <div class="col-md-4 text-center">
+      {% if user.avatar %}
+        <img src="{{ url_for('static', filename='uploads/' ~ user.avatar) }}" class="avatar mb-3" alt="Avatar">
+      {% else %}
+        <img src="{{ url_for('static', filename='default_avatar.png') }}" class="avatar mb-3" alt="Avatar Default">
+      {% endif %}
+      <h5>{{ user.full_name or user.username }}</h5>
+      <span class="badge bg-primary text-uppercase">{{ user.role }}</span>
+    </div>
+    <div class="col-md-8">
+      <h4 class="mb-3">Informasi Profil</h4>
+      <table class="table table-borderless">
+        <tr>
+          <th>Username:</th>
+          <td>{{ user.username }}</td>
+        </tr>
+        <tr>
+          <th>Nama Lengkap:</th>
+          <td>{{ user.full_name or '-' }}</td>
+        </tr>
+        <tr>
+          <th>Bio:</th>
+          <td>{{ user.bio or '-' }}</td>
+        </tr>
+      </table>
+
+      <a href="{{ url_for('edit_profile') }}" class="btn btn-warning">Edit Profil</a>
+      <a href="{{ url_for('change_password') }}" class="btn btn-secondary">Ubah Password</a>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}{% if edit %}Edit Sertifikat{% else %}Buat Sertifikat{% endif %}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2>{% if edit %}Edit Sertifikat{% else %}Buat Sertifikat Baru{% endif %}</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('admin_certificates') }}">Kelola Sertifikat</a></li>
+                    <li class="breadcrumb-item active">{% if edit %}Edit{% else %}Buat{% endif %}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-certificate"></i> 
+                        {% if edit %}Edit Data Sertifikat{% else %}Form Sertifikat Baru{% endif %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="student_id" class="form-label">Pilih Siswa <span class="text-danger">*</span></label>
+                            <select class="form-select" id="student_id" name="student_id" required>
+                                <option value="">-- Pilih Siswa --</option>
+                                {% for student in students %}
+                                <option value="{{ student.id }}" {% if edit and cert.student_id == student.id %}selected{% endif %}>
+                                    {{ student.full_name or student.username }} (@{{ student.username }})
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="class_id" class="form-label">Kelas (Opsional)</label>
+                            <select class="form-select" id="class_id" name="class_id">
+                                <option value="">-- Pilih Kelas (Opsional) --</option>
+                                {% for class in classes %}
+                                <option value="{{ class.id }}" {% if edit and cert.class_id == class.id %}selected{% endif %}>
+                                    {{ class.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <small class="text-muted">Kosongkan jika sertifikat tidak terkait kelas tertentu</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="certificate_number" class="form-label">Nomor Sertifikat <span class="text-danger">*</span></label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="certificate_number" 
+                                   name="certificate_number" 
+                                   placeholder="Contoh: CERT-2025-001" 
+                                   value="{% if edit %}{{ cert.certificate_number }}{% endif %}"
+                                   required>
+                            <small class="text-muted">Nomor unik untuk sertifikat ini</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Deskripsi/Keterangan</label>
+                            <textarea class="form-control" 
+                                      id="description" 
+                                      name="description" 
+                                      rows="4" 
+                                      placeholder="Contoh: Telah menyelesaikan kursus bahasa Jepang tingkat dasar dengan nilai memuaskan">{% if edit %}{{ cert.description }}{% endif %}</textarea>
+                            <small class="text-muted">Deskripsi prestasi atau pencapaian siswa</small>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('admin_certificates') }}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Batal
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> {% if edit %}Update Sertifikat{% else %}Buat Sertifikat{% endif %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+{% endblock %}

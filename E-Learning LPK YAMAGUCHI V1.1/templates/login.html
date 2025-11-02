@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4 class="mb-0">
+                        <i class="fas fa-sign-in-alt"></i> Login ke LMS Bahasa Jepang
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label class="form-label">Username</label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fas fa-user"></i>
+                                </span>
+                                <input type="text" name="username" class="form-control" 
+                                       placeholder="Masukkan username" required autofocus>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fas fa-lock"></i>
+                                </span>
+                                <input type="password" name="password" class="form-control" 
+                                       placeholder="Masukkan password" required>
+                            </div>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-sign-in-alt"></i> Login
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Info Box -->
+            <div class="alert alert-info mt-3">
+                <strong><i class="fas fa-info-circle"></i> Informasi:</strong>
+                <ul class="mb-0 mt-2">
+                    <li>Registrasi user baru dilakukan oleh Admin</li>
+                    <li>Jika belum memiliki akun, hubungi Administrator</li>
+                    <li>Default Admin: username: <code>admin</code>, password: <code>admin123</code></li>
+                </ul>
+            </div>
+
+            <!-- Demo Accounts -->
+            <div class="card mt-3">
+                <div class="card-header bg-secondary text-white">
+                    <small><i class="fas fa-key"></i> Akun Demo (Development)</small>
+                </div>
+                <div class="card-body">
+                    <small>
+                        <strong>Admin:</strong> admin / admin123<br>
+                        <strong>Guru:</strong> sensei / sensei123<br>
+                        <strong>Siswa:</strong> siswa / siswa123
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>{{ task.title }}</h3>
+<p>{{ task.description }}</p>
+<p>Due: {{ task.due_date }}</p>
+
+{% if g.user and g.user.role == 'student' %}
+  <p><a href="{{ url_for('upload_task', tid=task.id) }}">Kirim Tugas</a></p>
+{% else %}
+  <p><a href="{{ url_for('task_submissions', tid=task.id) }}">Lihat Submisi Siswa</a></p>
+{% endif %}
+{% endblock %}

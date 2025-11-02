@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}Beri Nilai - {{ submission.full_name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-star"></i> Beri Nilai Tugas
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <!-- Info Tugas -->
+                    <div class="alert alert-info mb-4">
+                        <h5><strong>{{ submission.task_title }}</strong></h5>
+                        <hr>
+                        <p class="mb-2">
+                            <i class="fas fa-user"></i> <strong>Siswa:</strong> 
+                            {{ submission.full_name }} (@{{ submission.username }})
+                        </p>
+                        <p class="mb-2">
+                            <i class="fas fa-clock"></i> <strong>Waktu Upload:</strong> 
+                            {{ submission.submitted_at.strftime('%d %B %Y, %H:%M') if submission.submitted_at else '-' }}
+                        </p>
+                        <p class="mb-0">
+                            <i class="fas fa-file"></i> <strong>File:</strong> 
+                            <a href="{{ url_for('static', filename=submission.file_path.replace('static/', '').replace('\\', '/')) }}" 
+                               target="_blank" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-download"></i> Lihat/Unduh File
+                            </a>
+                        </p>
+                    </div>
+
+                    <!-- Form Penilaian -->
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="score" class="form-label">
+                                Nilai (0-100) <span class="text-danger">*</span>
+                            </label>
+                            <input type="number" 
+                                   class="form-control form-control-lg" 
+                                   id="score" 
+                                   name="score" 
+                                   min="0" 
+                                   max="100" 
+                                   step="0.01"
+                                   value="{{ submission.score if submission.score is not none else '' }}"
+                                   required>
+                            <small class="text-muted">Masukkan nilai antara 0 sampai 100</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="feedback" class="form-label">
+                                Feedback/Komentar
+                            </label>
+                            <textarea class="form-control" 
+                                      id="feedback" 
+                                      name="feedback" 
+                                      rows="5"
+                                      placeholder="Berikan komentar atau saran untuk siswa...">{{ submission.feedback or '' }}</textarea>
+                            <small class="text-muted">Opsional - berikan feedback untuk membantu siswa</small>
+                        </div>
+
+                        {% if submission.score is not none %}
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle"></i> 
+                            <strong>Perhatian:</strong> Tugas ini sudah pernah dinilai. 
+                            Mengupdate nilai akan menimpa nilai sebelumnya.
+                        </div>
+                        {% endif %}
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('view_task_submissions', tid=submission.task_id) }}" 
+                               class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Batal
+                            </a>
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-save"></i> 
+                                {% if submission.score is not none %}Update Nilai{% else %}Simpan Nilai{% endif %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Riwayat Penilaian (jika sudah dinilai) -->
+            {% if submission.score is not none %}
+            <div class="card shadow mt-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Riwayat Penilaian</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Nilai Saat Ini:</strong> <span class="badge bg-success fs-5">{{ submission.score }}</span></p>
+                    {% if submission.feedback %}
+                    <p><strong>Feedback:</strong></p>
+                    <div class="alert alert-light">{{ submission.feedback }}</div>
+                    {% endif %}
+                    <p class="mb-0">
+                        <small class="text-muted">
+                            Dinilai pada: {{ submission.graded_at.strftime('%d %B %Y, %H:%M') if submission.graded_at else '-' }}
+                        </small>
+                    </p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

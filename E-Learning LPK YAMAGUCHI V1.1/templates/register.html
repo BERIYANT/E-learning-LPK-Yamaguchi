@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Daftarkan User Baru - Admin{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-user-plus"></i> Daftarkan User Baru
+                    </h4>
+                    <small>Hanya Admin yang dapat mengakses halaman ini</small>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label class="form-label">Username <span class="text-danger">*</span></label>
+                            <input type="text" name="username" class="form-control" required>
+                            <small class="text-muted">Username untuk login</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Password <span class="text-danger">*</span></label>
+                            <input type="password" name="password" class="form-control" required>
+                            <small class="text-muted">Password minimal 6 karakter</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Nama Lengkap</label>
+                            <input type="text" name="full_name" class="form-control" placeholder="Opsional">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Role <span class="text-danger">*</span></label>
+                            <select name="role" class="form-select" id="roleSelect" required>
+                                <option value="student">Siswa</option>
+                                <option value="sensei">Guru (Sensei)</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3" id="classSelectDiv">
+                            <label class="form-label">Kelas (untuk Siswa)</label>
+                            <select name="class_id" class="form-select" id="classSelect">
+                                <option value="">-- Pilih Kelas --</option>
+                                {% for cls in classes %}
+                                <option value="{{ cls.id }}">{{ cls.name }}</option>
+                                {% endfor %}
+                            </select>
+                            <small class="text-muted">Siswa akan otomatis terdaftar di kelas yang dipilih</small>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-user-plus"></i> Daftarkan User
+                            </button>
+                            <a href="{{ url_for('admin_users') }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Kembali ke Data Users
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="alert alert-info mt-3">
+                <strong><i class="fas fa-info-circle"></i> Informasi:</strong>
+                <ul class="mb-0 mt-2">
+                    <li>Halaman registrasi publik telah dinonaktifkan</li>
+                    <li>Hanya admin yang dapat mendaftarkan user baru</li>
+                    <li>User yang didaftarkan dapat login menggunakan username dan password yang dibuat</li>
+                    <li>Siswa harus dipilihkan kelasnya saat registrasi</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('roleSelect').addEventListener('change', function() {
+    const classDiv = document.getElementById('classSelectDiv');
+    const classSelect = document.getElementById('classSelect');
+    
+    if (this.value === 'student') {
+        classDiv.style.display = 'block';
+        classSelect.required = false; // Opsional untuk siswa
+    } else {
+        classDiv.style.display = 'none';
+        classSelect.required = false;
+        classSelect.value = '';
+    }
+});
+
+// Trigger on page load
+document.getElementById('roleSelect').dispatchEvent(new Event('change'));
+</script>
+{% endblock %}
