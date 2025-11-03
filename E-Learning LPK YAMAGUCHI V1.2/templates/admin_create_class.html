@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}Buat Kelas Baru{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="fas fa-school"></i> Buat Kelas Baru</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('admin_classes') }}">Kelola Kelas</a></li>
+                    <li class="breadcrumb-item active">Buat Kelas</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-plus-circle"></i> Form Kelas Baru
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('admin_create_class') }}">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">
+                                Nama Kelas <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="name" 
+                                   name="name" 
+                                   placeholder="Contoh: Kelas A - Tingkat Dasar"
+                                   required
+                                   autofocus>
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle"></i> Berikan nama yang jelas dan deskriptif
+                            </small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="schedule" class="form-label">
+                                Jadwal <span class="text-muted">(Opsional)</span>
+                            </label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="schedule" 
+                                   name="schedule" 
+                                   placeholder="Contoh: Senin & Rabu, 14:00 - 16:00">
+                            <small class="text-muted">
+                                <i class="fas fa-calendar-alt"></i> Jadwal pertemuan kelas
+                            </small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">
+                                Deskripsi <span class="text-muted">(Opsional)</span>
+                            </label>
+                            <textarea class="form-control" 
+                                      id="description" 
+                                      name="description" 
+                                      rows="4"
+                                      placeholder="Contoh: Kelas untuk pemula yang ingin belajar bahasa Jepang dari dasar. Materi mencakup hiragana, katakana, dan percakapan sehari-hari."></textarea>
+                            <small class="text-muted">
+                                <i class="fas fa-file-alt"></i> Deskripsi singkat tentang kelas ini
+                            </small>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('admin_classes') }}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Batal
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Simpan Kelas
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Info Card -->
+            <div class="card mt-4 border-info">
+                <div class="card-body">
+                    <h6 class="card-title text-info">
+                        <i class="fas fa-lightbulb"></i> Tips
+                    </h6>
+                    <ul class="mb-0 small">
+                        <li>Gunakan nama kelas yang mudah diingat dan deskriptif</li>
+                        <li>Jadwal membantu siswa mengetahui waktu pertemuan kelas</li>
+                        <li>Deskripsi yang jelas membantu siswa memahami materi yang akan dipelajari</li>
+                        <li>Setelah kelas dibuat, Anda dapat menambahkan siswa melalui menu Kelola User</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border-radius: 10px;
+    }
+    
+    .card-header {
+        border-radius: 10px 10px 0 0 !important;
+    }
+    
+    .form-control:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+    
+    .btn {
+        border-radius: 5px;
+        padding: 0.5rem 1.5rem;
+    }
+    
+    .breadcrumb {
+        background-color: transparent;
+        padding: 0;
+        margin-bottom: 1rem;
+    }
+</style>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+{% endblock %}

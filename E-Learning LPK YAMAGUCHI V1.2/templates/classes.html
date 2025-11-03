@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Daftar Kelas</title>
+</head>
+<body>
+  <h2>Daftar Kelas</h2>
+
+  {% if user_class %}
+    <p><strong>Kelas Anda saat ini:</strong> {{ user_class.name }} ({{ user_class.schedule }})</p>
+  {% endif %}
+
+  <table border="1" cellpadding="8">
+    <thead>
+      <tr>
+        <th>Nama Kelas</th>
+        <th>Jadwal</th>
+        <th>Deskripsi</th>
+        <th>Jumlah Siswa</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for c in classes %}
+      <tr>
+        <td>{{ c.name }}</td>
+        <td>{{ c.schedule }}</td>
+        <td>{{ c.description }}</td>
+        <td>{{ c.total_siswa }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <p><a href="{{ url_for('dashboard') }}">Kembali ke Dashboard</a></p>
+</body>
+</html>

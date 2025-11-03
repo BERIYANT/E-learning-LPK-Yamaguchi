@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>Buat Kuis Baru</h3>
+<form method="post" action="{{ url_for('create_quiz') }}">
+  Judul: <input name="title" required><br><br>
+  <button type="submit">Buat Kuis</button>
+</form>
+{% endblock %}
