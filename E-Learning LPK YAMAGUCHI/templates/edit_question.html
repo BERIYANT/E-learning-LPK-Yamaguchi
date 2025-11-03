@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Pertanyaan{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-warning text-dark">
+                    <h4 class="mb-0">
+                        <i class="fas fa-edit"></i> Edit Pertanyaan
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="question" class="form-label">Pertanyaan <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="question" name="question" rows="3" required>{{ question.question }}</textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Pilihan Jawaban <span class="text-danger">*</span></label>
+                            
+                            <div class="input-group mb-2">
+                                <span class="input-group-text bg-primary text-white" style="width: 50px;">A</span>
+                                <input type="text" class="form-control" name="a" value="{{ question.option_a }}" required>
+                            </div>
+
+                            <div class="input-group mb-2">
+                                <span class="input-group-text bg-success text-white" style="width: 50px;">B</span>
+                                <input type="text" class="form-control" name="b" value="{{ question.option_b }}" required>
+                            </div>
+
+                            <div class="input-group mb-2">
+                                <span class="input-group-text bg-warning text-dark" style="width: 50px;">C</span>
+                                <input type="text" class="form-control" name="c" value="{{ question.option_c }}" required>
+                            </div>
+
+                            <div class="input-group mb-2">
+                                <span class="input-group-text bg-info text-white" style="width: 50px;">D</span>
+                                <input type="text" class="form-control" name="d" value="{{ question.option_d }}" required>
+                            </div>
+
+                            <div class="input-group mb-2">
+                                <span class="input-group-text bg-danger text-white" style="width: 50px;">E</span>
+                                <input type="text" class="form-control" name="e" value="{{ question.option_e }}" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="correct" class="form-label">Jawaban yang Benar <span class="text-danger">*</span></label>
+                            <select class="form-select" id="correct" name="correct" required>
+                                <option value="">-- Pilih Jawaban Benar --</option>
+                                <option value="a" {% if question.correct_option == 'a' %}selected{% endif %}>A</option>
+                                <option value="b" {% if question.correct_option == 'b' %}selected{% endif %}>B</option>
+                                <option value="c" {% if question.correct_option == 'c' %}selected{% endif %}>C</option>
+                                <option value="d" {% if question.correct_option == 'd' %}selected{% endif %}>D</option>
+                                <option value="e" {% if question.correct_option == 'e' %}selected{% endif %}>E</option>
+                            </select>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fas fa-save"></i> Simpan Perubahan
+                            </button>
+                            <a href="{{ url_for('add_question', qid=quiz_id) }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Kembali
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

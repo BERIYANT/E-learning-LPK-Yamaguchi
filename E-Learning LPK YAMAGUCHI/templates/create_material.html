@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-book"></i>
+                        {% if edit %}Edit Materi{% else %}Buat Materi Baru{% endif %}
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" enctype="multipart/form-data">
+                        <!-- Judul Materi -->
+                        <div class="mb-4">
+                            <label for="title" class="form-label fw-bold">
+                                <i class="fas fa-heading text-primary"></i> Judul Materi
+                                <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" 
+                                   class="form-control form-control-lg" 
+                                   id="title" 
+                                   name="title" 
+                                   placeholder="Masukkan judul materi" 
+                                   value="{% if edit %}{{ material.title }}{% endif %}"
+                                   required>
+                            <small class="text-muted">Contoh: Pengenalan Hiragana, Grammar N5, dll</small>
+                        </div>
+
+                        <!-- Konten Materi -->
+                        <div class="mb-4">
+                            <label for="content" class="form-label fw-bold">
+                                <i class="fas fa-align-left text-primary"></i> Konten Materi
+                                <span class="text-danger">*</span>
+                            </label>
+                            <textarea class="form-control" 
+                                      id="content" 
+                                      name="content" 
+                                      rows="10" 
+                                      placeholder="Tulis konten materi di sini...&#10;&#10;Tips: Gunakan format yang jelas dan mudah dipahami"
+                                      required>{% if edit %}{{ material.content }}{% endif %}</textarea>
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle"></i> 
+                                Jelaskan materi dengan detail. Anda juga bisa melampirkan file pendukung di bawah.
+                            </small>
+                        </div>
+
+                        <!-- File Lampiran -->
+                        <div class="mb-4">
+                            <label for="file" class="form-label fw-bold">
+                                <i class="fas fa-paperclip text-primary"></i> File Lampiran
+                                <span class="text-muted">(Opsional)</span>
+                            </label>
+                            
+                            {% if edit and material.file_path %}
+                            <div class="alert alert-info mb-3">
+                                <i class="fas fa-file"></i> File saat ini: 
+                                <strong>{{ material.file_path.split('/')[-1] }}</strong>
+                                <a href="/{{ material.file_path|normalize_path }}" 
+                                   class="btn btn-sm btn-outline-primary ms-2" 
+                                   target="_blank">
+                                    <i class="fas fa-eye"></i> Lihat File
+                                </a>
+                                <div class="form-check mt-2">
+                                    <input class="form-check-input" 
+                                           type="checkbox" 
+                                           name="remove_file" 
+                                           value="yes" 
+                                           id="remove_file">
+                                    <label class="form-check-label text-danger" for="remove_file">
+                                        <i class="fas fa-trash"></i> Hapus file ini
+                                    </label>
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            <input type="file" 
+                                   class="form-control" 
+                                   id="file" 
+                                   name="file"
+                                   accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.jpg,.jpeg,.png,.gif,.zip,.rar">
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle"></i> 
+                                Format yang didukung: PDF, Word, PowerPoint, Gambar, ZIP, RAR (Max 4MB)
+                            </small>
+                        </div>
+
+                        <!-- Divider -->
+                        <hr class="my-4">
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-save"></i>
+                                {% if edit %}Perbarui Materi{% else %}Simpan Materi{% endif %}
+                            </button>
+                            <a href="{{ url_for('dashboard') }}" class="btn btn-secondary btn-lg">
+                                <i class="fas fa-times"></i> Batal
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Tips Card -->
+            <div class="card mt-4 border-info">
+                <div class="card-body">
+                    <h6 class="text-info">
+                        <i class="fas fa-lightbulb"></i> Tips Membuat Materi Berkualitas:
+                    </h6>
+                    <ul class="mb-0 small">
+                        <li>Gunakan judul yang jelas dan deskriptif</li>
+                        <li>Susun konten dengan struktur yang mudah dipahami</li>
+                        <li>Berikan contoh-contoh praktis jika memungkinkan</li>
+                        <li>Upload file pendukung seperti PDF, presentasi, atau gambar</li>
+                        <li>Periksa kembali sebelum menyimpan</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-control:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+    
+    .card {
+        border-radius: 12px;
+        border: none;
+    }
+    
+    .card-header {
+        border-radius: 12px 12px 0 0 !important;
+    }
+    
+    textarea.form-control {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+    }
+</style>
+{% endblock %}

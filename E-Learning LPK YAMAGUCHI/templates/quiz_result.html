@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}Hasil Kuis{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <!-- Kartu Nilai -->
+            <div class="card shadow mb-4">
+                <div class="card-header {% if score.score >= 75 %}bg-success{% elif score.score >= 60 %}bg-warning{% else %}bg-danger{% endif %} text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-trophy"></i> Hasil Kuis: {{ quiz.title }}
+                    </h4>
+                </div>
+                <div class="card-body text-center">
+                    <h1 class="display-1 {% if score.score >= 75 %}text-success{% elif score.score >= 60 %}text-warning{% else %}text-danger{% endif %}">
+                        {{ score.score }}
+                    </h1>
+                    <p class="lead">
+                        {% if score.score >= 90 %}
+                            <i class="fas fa-star"></i> Luar Biasa! Sempurna!
+                        {% elif score.score >= 75 %}
+                            <i class="fas fa-thumbs-up"></i> Bagus Sekali!
+                        {% elif score.score >= 60 %}
+                            <i class="fas fa-check"></i> Cukup Baik
+                        {% else %}
+                            <i class="fas fa-redo"></i> Perlu Belajar Lebih Giat
+                        {% endif %}
+                    </p>
+                    <p class="text-muted">
+                        Dikerjakan pada: {{ score.graded_at.strftime('%d %B %Y, %H:%M') if score.graded_at else '-' }}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Pembahasan Jawaban -->
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-clipboard-list"></i> Pembahasan Jawaban
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% for ans in answers %}
+                    <div class="card mb-3 {% if ans.is_correct %}border-success{% else %}border-danger{% endif %}">
+                        <div class="card-header {% if ans.is_correct %}bg-success bg-opacity-10{% else %}bg-danger bg-opacity-10{% endif %}">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h6 class="mb-0">Pertanyaan {{ loop.index }}</h6>
+                                {% if ans.is_correct %}
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-check"></i> Benar
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-danger">
+                                        <i class="fas fa-times"></i> Salah
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p class="lead fw-bold">{{ ans.question }}</p>
+                            
+                            <div class="row mt-3">
+                                <div class="col-md-6">
+                                    <h6>Pilihan Jawaban:</h6>
+                                    
+                                    {% set options = [
+                                        ('a', ans.option_a),
+                                        ('b', ans.option_b),
+                                        ('c', ans.option_c),
+                                        ('d', ans.option_d),
+                                        ('e', ans.option_e)
+                                    ] %}
+                                    
+                                    {% for opt_val, opt_text in options %}
+                                    <div class="mb-2 p-2 rounded 
+                                        {% if ans.correct_option == opt_val %}bg-success bg-opacity-25{% endif %}
+                                        {% if ans.selected_option == opt_val and not ans.is_correct %}bg-danger bg-opacity-25{% endif %}">
+                                        <strong>{{ opt_val|upper }}.</strong> {{ opt_text }}
+                                        {% if ans.correct_option == opt_val %}
+                                            <i class="fas fa-check text-success"></i> <em>(Jawaban Benar)</em>
+                                        {% endif %}
+                                        {% if ans.selected_option == opt_val %}
+                                            <i class="fas fa-hand-pointer text-primary"></i> <em>(Jawaban Anda)</em>
+                                        {% endif %}
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="alert {% if ans.is_correct %}alert-success{% else %}alert-danger{% endif %}">
+                                        <strong>Jawaban Anda:</strong> 
+                                        {% if ans.selected_option %}
+                                            {{ ans.selected_option|upper }}
+                                        {% else %}
+                                            <em>Tidak dijawab</em>
+                                        {% endif %}
+                                        <br>
+                                        <strong>Jawaban Benar:</strong> {{ ans.correct_option|upper }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Tombol Aksi -->
+            <div class="text-center mt-4 mb-4">
+                <a href="{{ url_for('dashboard') }}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-home"></i> Kembali ke Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

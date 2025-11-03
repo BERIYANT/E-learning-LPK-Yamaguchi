@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Topik - Forum Diskusi{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('forum') }}">Forum Diskusi</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('view_post', post_id=post.id) }}">{{ post.title }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Edit</li>
+        </ol>
+    </nav>
+
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">
+                <i class="fas fa-edit"></i> Edit Topik Diskusi
+            </h4>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('edit_post', post_id=post.id) }}">
+                <div class="mb-3">
+                    <label for="title" class="form-label">Judul Topik <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="title" name="title" 
+                           value="{{ post.title }}" required maxlength="200">
+                    <div class="form-text">Buat judul yang jelas dan deskriptif.</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="body" class="form-label">Isi Diskusi <span class="text-danger">*</span></label>
+                    <textarea class="form-control" id="body" name="body" rows="10" required>{{ post.body }}</textarea>
+                    <div class="form-text">Jelaskan topik diskusi Anda secara detail.</div>
+                </div>
+
+                <div class="alert alert-warning">
+                    <i class="fas fa-info-circle"></i>
+                    <strong>Catatan:</strong> Perubahan akan langsung terlihat oleh semua pengguna.
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Simpan Perubahan
+                    </button>
+                    <a href="{{ url_for('view_post', post_id=post.id) }}" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> Batal
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
