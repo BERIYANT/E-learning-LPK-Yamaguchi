@@ -20,7 +20,7 @@ db_config = {
     'host': 'localhost',
     'user': 'root',
     'password': '',
-    'database': 'lms_jepang'
+    'database': 'elearning_lpkyamaguchi'
 }
 
 
@@ -2519,19 +2519,43 @@ def view_quiz_history_detail(qid, score_id):
 
 # === START APP ===
 if __name__ == '__main__':
+    # --- Tambahkan import di bagian atas file kamu ---
+    from pyngrok import ngrok, conf
+    import webbrowser  # opsional: biar otomatis buka browser
+
+    # --- Buat user default (jika belum ada) ---
     with app.app_context():
         db = get_db()
         cur = db.cursor()
         try:
-            cur.execute("INSERT IGNORE INTO users (username,password,role,full_name) VALUES (%s,%s,%s,%s)",
-                        ("admin", generate_password_hash("admin123"), "admin", "Administrator"))
-            cur.execute("INSERT IGNORE INTO users (username,password,role,full_name) VALUES (%s,%s,%s,%s)",
-                        ("sensei", generate_password_hash("sensei123"), "sensei", "Sensei Ichiro"))
-            cur.execute("INSERT IGNORE INTO users (username,password,role,full_name) VALUES (%s,%s,%s,%s)",
-                        ("siswa", generate_password_hash("siswa123"), "student", "Siswa Aiko"))
+            cur.execute("""
+                INSERT IGNORE INTO users (username,password,role,full_name)
+                VALUES (%s,%s,%s,%s)
+            """, ("admin", generate_password_hash("admin123"), "admin", "Administrator"))
+            cur.execute("""
+                INSERT IGNORE INTO users (username,password,role,full_name)
+                VALUES (%s,%s,%s,%s)
+            """, ("sensei", generate_password_hash("sensei123"), "sensei", "Sensei Ichiro"))
+            cur.execute("""
+                INSERT IGNORE INTO users (username,password,role,full_name)
+                VALUES (%s,%s,%s,%s)
+            """, ("siswa", generate_password_hash("siswa123"), "student", "Siswa Aiko"))
             db.commit()
         except Exception as e:
-            print("Perhatikan: gagal insert default users (mungkin tabel belum dibuat):", e)
-    
-    # Jalankan dengan host='0.0.0.0' untuk akses jaringan lokal
+            print("⚠️ Perhatikan: gagal insert default users (mungkin tabel belum dibuat):", e)
+
+    # --- Jalankan ngrok ---
+    try:
+        conf.get_default().auth_token = "34utbZYQl80GDch5ccZw57PfVZm_659m5PdLnM5A54CYeHXTY"
+        ngrok.kill()  # 🧹 hentikan tunnel lama agar tidak bentrok
+        public_url = ngrok.connect(addr=5000)
+        print(f"✅ Akses Flask kamu di URL ini: {public_url.public_url}")
+
+        # (Opsional) Buka otomatis di browser
+        webbrowser.open(public_url.public_url)
+
+    except Exception as e:
+        print("❌ Gagal membuat tunnel ngrok:", e)
+
+    # --- Jalankan Flask ---
     app.run(debug=True, host='0.0.0.0', port=5000)
