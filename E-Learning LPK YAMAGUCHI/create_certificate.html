@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block title %}{% if edit %}Edit Sertifikat{% else %}Buat Sertifikat{% endif %}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2>{% if edit %}Edit Sertifikat{% else %}Buat Sertifikat Baru{% endif %}</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('admin_certificates') }}">Kelola Sertifikat</a></li>
+                    <li class="breadcrumb-item active">{% if edit %}Edit{% else %}Buat{% endif %}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-certificate"></i> 
+                        {% if edit %}Edit Data Sertifikat{% else %}Form Sertifikat Baru{% endif %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="student_id" class="form-label">Pilih Siswa <span class="text-danger">*</span></label>
+                            <select class="form-select" id="student_id" name="student_id" required>
+                                <option value="">-- Pilih Siswa --</option>
+                                {% for student in students %}
+                                <option value="{{ student.id }}" {% if edit and cert.student_id == student.id %}selected{% endif %}>
+                                    {{ student.full_name or student.username }} (@{{ student.username }})
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="certificate_number" class="form-label">Nomor Sertifikat <span class="text-danger">*</span></label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="certificate_number" 
+                                   name="certificate_number" 
+                                   placeholder="Contoh: CERT-2025-001" 
+                                   value="{% if edit %}{{ cert.certificate_number }}{% endif %}"
+                                   required>
+                            <small class="text-muted">Nomor unik untuk sertifikat ini</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Deskripsi/Keterangan</label>
+                            <textarea class="form-control" 
+                                      id="description" 
+                                      name="description" 
+                                      rows="4" 
+                                      placeholder="Contoh: Telah menyelesaikan kursus bahasa Jepang tingkat dasar dengan nilai memuaskan">{% if edit %}{{ cert.description }}{% endif %}</textarea>
+                            <small class="text-muted">Deskripsi prestasi atau pencapaian siswa</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="file" class="form-label">
+                                File Sertifikat (Opsional)
+                                <i class="fas fa-info-circle text-info" data-bs-toggle="tooltip" title="Upload file sertifikat dalam format PDF, gambar, atau dokumen"></i>
+                            </label>
+                            <input type="file" 
+                                   class="form-control" 
+                                   id="file" 
+                                   name="file"
+                                   accept=".pdf,.jpg,.jpeg,.png,.gif,.doc,.docx"
+                                   onchange="previewFileName(this)">
+                            <small class="text-muted">
+                                <i class="fas fa-upload"></i> Format: PDF, JPG, PNG, GIF, DOC, DOCX | Maksimal: 4MB
+                            </small>
+                            <div id="file-preview" class="mt-2" style="display: none;">
+                                <div class="alert alert-success py-2">
+                                    <i class="fas fa-file"></i> <span id="file-name"></span>
+                                </div>
+                            </div>
+                            
+                            {% if edit and cert.file_path %}
+                            <div class="mt-3">
+                                <div class="alert alert-info">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <i class="fas fa-file-alt"></i> <strong>File saat ini:</strong> 
+                                            <span class="badge bg-primary">{{ cert.file_path.split('/')[-1] }}</span>
+                                        </div>
+                                        <a href="{{ url_for('download_file', filename=cert.file_path|normalize_path) }}" 
+                                           class="btn btn-sm btn-success" 
+                                           target="_blank">
+                                            <i class="fas fa-download"></i> Lihat/Download
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="remove_file" value="yes" id="remove_file">
+                                    <label class="form-check-label text-danger" for="remove_file">
+                                        <i class="fas fa-trash-alt"></i> Hapus file saat ini
+                                    </label>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('admin_certificates') }}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Batal
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> {% if edit %}Update Sertifikat{% else %}Buat Sertifikat{% endif %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Preview nama file yang dipilih
+function previewFileName(input) {
+    const preview = document.getElementById('file-preview');
+    const fileName = document.getElementById('file-name');
+    
+    if (input.files && input.files[0]) {
+        const file = input.files[0];
+        const fileSize = (file.size / 1024 / 1024).toFixed(2); // MB
+        
+        if (fileSize > 4) {
+            alert('Ukuran file terlalu besar! Maksimal 4MB.');
+            input.value = '';
+            preview.style.display = 'none';
+            return;
+        }
+        
+        fileName.textContent = file.name + ' (' + fileSize + ' MB)';
+        preview.style.display = 'block';
+    } else {
+        preview.style.display = 'none';
+    }
+}
+
+// Initialize Bootstrap tooltips
+document.addEventListener('DOMContentLoaded', function() {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+});
+</script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+{% endblock %}

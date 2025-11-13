@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}Edit User - Admin{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-warning text-dark">
+                    <h4 class="mb-0">
+                        <i class="fas fa-user-edit"></i> Edit User: {{ user.username }}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label class="form-label">Username <span class="text-danger">*</span></label>
+                            <input type="text" name="username" class="form-control" 
+                                   value="{{ user.username }}" required>
+                            <small class="text-muted">Username untuk login</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Nama Lengkap</label>
+                            <input type="text" name="full_name" class="form-control" 
+                                   value="{{ user.full_name or '' }}" placeholder="Opsional">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Role <span class="text-danger">*</span></label>
+                            <select name="role" class="form-select" id="roleSelect" required>
+                                <option value="student" {% if user.role == 'student' %}selected{% endif %}>Siswa</option>
+                                <option value="sensei" {% if user.role == 'sensei' %}selected{% endif %}>Guru (Sensei)</option>
+                                <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3" id="classSelectDiv">
+                            <label class="form-label">Kelas (untuk Siswa)</label>
+                            <select name="class_id" class="form-select" id="classSelect">
+                                <option value="">-- Pilih Kelas --</option>
+                                {% for cls in classes %}
+                                <option value="{{ cls.id }}" 
+                                    {% if current_enrollment and current_enrollment.class_id == cls.id %}selected{% endif %}>
+                                    {{ cls.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <small class="text-muted">Siswa akan otomatis terdaftar di kelas yang dipilih</small>
+                        </div>
+
+                        <hr>
+
+                        <div class="mb-3">
+                            <label class="form-label">Password Baru</label>
+                            <input type="password" name="new_password" class="form-control" 
+                                   placeholder="Kosongkan jika tidak ingin mengubah password">
+                            <small class="text-muted">Isi hanya jika ingin mengubah password</small>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i> 
+                            <strong>Info:</strong> Jika password baru tidak diisi, password lama tidak akan berubah.
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fas fa-save"></i> Simpan Perubahan
+                            </button>
+                            <a href="{{ url_for('admin_users') }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Batal
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Shortcut Reset Password -->
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h6 class="mb-3">
+                        <i class="fas fa-key"></i> Reset Password
+                    </h6>
+                    <p class="text-muted small mb-2">
+                        Atau gunakan halaman khusus untuk reset password:
+                    </p>
+                    <a href="{{ url_for('admin_reset_password', user_id=user.id) }}" 
+                       class="btn btn-info btn-sm">
+                        <i class="fas fa-key"></i> Reset Password User
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('roleSelect').addEventListener('change', function() {
+    const classDiv = document.getElementById('classSelectDiv');
+    const classSelect = document.getElementById('classSelect');
+    
+    if (this.value === 'student') {
+        classDiv.style.display = 'block';
+    } else {
+        classDiv.style.display = 'none';
+        classSelect.value = '';
+    }
+});
+
+// Trigger on page load
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('roleSelect').dispatchEvent(new Event('change'));
+});
+</script>
+{% endblock %}

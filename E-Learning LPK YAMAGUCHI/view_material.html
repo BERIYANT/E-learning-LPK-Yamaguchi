@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Materi</li>
+                </ol>
+            </nav>
+
+            <!-- Material Card -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-gradient-primary text-white py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h3 class="mb-0">
+                            <i class="fas fa-book-open"></i>
+                            {{ material.title }}
+                        </h3>
+                        {% if g.user.role == 'sensei' %}
+                        <div class="btn-group">
+                            <a href="{{ url_for('edit_material', mid=material.id) }}" 
+                               class="btn btn-light btn-sm">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <a href="{{ url_for('delete_material', mid=material.id) }}" 
+                               class="btn btn-danger btn-sm"
+                               onclick="return confirm('Yakin ingin menghapus materi ini?')">
+                                <i class="fas fa-trash"></i> Hapus
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="card-body p-4">
+                    <!-- Metadata -->
+                    <div class="mb-4 pb-3 border-bottom">
+                        <div class="row text-muted small">
+                            <div class="col-md-6">
+                                <i class="fas fa-calendar"></i> 
+                                Dibuat: {{ material.created_at.strftime('%d %B %Y, %H:%M') if material.created_at else '-' }}
+                            </div>
+                            <div class="col-md-6 text-md-end">
+                                <i class="fas fa-user"></i> 
+                                Oleh: {{ material.created_by }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- File Attachment (if exists) -->
+                    {% if material.file_path %}
+                    <div class="alert alert-success mb-4">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-file-download fa-2x"></i>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="mb-1">File Lampiran Tersedia</h6>
+                                <p class="mb-2 small">{{ material.file_path.split('/')[-1] }}</p>
+                                <a href="/{{ material.file_path|normalize_path }}" 
+                                   class="btn btn-success btn-sm" 
+                                   target="_blank">
+                                    <i class="fas fa-download"></i> Download / Lihat File
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Content -->
+                    <div class="material-content">
+                        <h5 class="text-primary mb-3">
+                            <i class="fas fa-align-left"></i> Konten Materi
+                        </h5>
+                        <div class="content-text">
+                            {{ material.content|replace('\n', '<br>')|safe }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer bg-light">
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Kembali ke Dashboard
+                    </a>
+                </div>
+            </div>
+
+            <!-- Info untuk Student -->
+            {% if g.user.role == 'student' %}
+            <div class="card mt-4 border-info">
+                <div class="card-body">
+                    <h6 class="text-info">
+                        <i class="fas fa-info-circle"></i> Catatan untuk Siswa:
+                    </h6>
+                    <ul class="mb-0 small">
+                        <li>Baca materi dengan seksama dan pahami setiap bagian</li>
+                        <li>Download file lampiran jika tersedia untuk pembelajaran lebih dalam</li>
+                        <li>Catat hal-hal penting yang perlu diingat</li>
+                        <li>Jika ada yang tidak dimengerti, tanyakan di Forum Diskusi</li>
+                    </ul>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #c82333 0%, #c82333 100%);
+    }
+    
+    .material-content {
+        background: #f8f9fa;
+        padding: 2rem;
+        border-radius: 8px;
+        border-left: 4px solid #dc3545;
+    }
+    
+    .content-text {
+        font-size: 1.05rem;
+        line-height: 1.8;
+        color: #333;
+    }
+    
+    .card {
+        border-radius: 12px;
+        border: none;
+    }
+    
+    .alert {
+        border-radius: 8px;
+    }
+</style>
+{% endblock %}

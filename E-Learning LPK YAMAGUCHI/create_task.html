@@ -1,0 +1,222 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ 'Edit Tugas' if edit else 'Buat Tugas Baru' }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow-lg">
+                <div class="card-header bg-gradient-primary text-white py-3">
+                    <h4 class="mb-0">
+                        <i class="fas fa-tasks me-2"></i>
+                        {{ 'Edit Tugas' if edit else 'Buat Tugas Baru' }}
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <!-- Alert Info -->
+                    <div class="alert alert-info d-flex align-items-center mb-4" role="alert">
+                        <i class="fas fa-info-circle me-3 fs-5"></i>
+                        <div>
+                            <strong>Panduan:</strong> 
+                            Upload file tugas (soal/template) jika diperlukan. Siswa akan mengupload jawaban mereka secara terpisah.
+                        </div>
+                    </div>
+
+                    <form method="POST" enctype="multipart/form-data">
+                        <!-- Judul Tugas -->
+                        <div class="mb-4">
+                            <label for="title" class="form-label fw-bold">
+                                <i class="fas fa-heading text-primary me-2"></i>
+                                Judul Tugas 
+                                <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" 
+                                   class="form-control form-control-lg" 
+                                   id="title" 
+                                   name="title" 
+                                   value="{{ task.title if edit else '' }}" 
+                                   required 
+                                   placeholder="Contoh: Latihan Menulis Kanji JLPT N5 - Bab 3">
+                            <small class="form-text text-muted">
+                                <i class="fas fa-lightbulb me-1"></i>
+                                Gunakan judul yang jelas dan spesifik
+                            </small>
+                        </div>
+
+                        <!-- Deskripsi Tugas -->
+                        <div class="mb-4">
+                            <label for="description" class="form-label fw-bold">
+                                <i class="fas fa-align-left text-primary me-2"></i>
+                                Deskripsi Tugas 
+                                <span class="text-danger">*</span>
+                            </label>
+                            <textarea class="form-control" 
+                                      id="description" 
+                                      name="description" 
+                                      rows="8" 
+                                      required 
+                                      placeholder="Jelaskan detail tugas yang harus dikerjakan siswa:&#10;&#10;- Apa yang harus dikerjakan?&#10;- Bagaimana format pengerjaan?&#10;- Apa kriteria penilaian?&#10;- Instruksi khusus lainnya?">{{ task.description if edit else '' }}</textarea>
+                            <small class="form-text text-muted">
+                                <i class="fas fa-lightbulb me-1"></i>
+                                Berikan instruksi yang jelas dan lengkap agar siswa memahami tugas dengan baik
+                            </small>
+                        </div>
+
+                        <!-- Deadline -->
+                        <div class="mb-4">
+                            <label for="due_date" class="form-label fw-bold">
+                                <i class="fas fa-calendar-alt text-primary me-2"></i>
+                                Batas Waktu Pengumpulan (Deadline)
+                            </label>
+                            <input type="date" 
+                                   class="form-control" 
+                                   id="due_date" 
+                                   name="due_date" 
+                                   value="{{ task.due_date if edit else '' }}">
+                            <small class="form-text text-muted">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Opsional - Kosongkan jika tidak ada batas waktu khusus
+                            </small>
+                        </div>
+
+                        <!-- File Lampiran -->
+                        <div class="mb-4">
+                            <label for="file" class="form-label fw-bold">
+                                <i class="fas fa-paperclip text-primary me-2"></i>
+                                File Lampiran Tugas (Soal/Template)
+                            </label>
+                            
+                            {% if edit and task.file_path %}
+                            <!-- File yang sudah ada -->
+                            <div class="card border-success mb-3">
+                                <div class="card-body bg-light">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1 text-success">
+                                                <i class="fas fa-file-alt me-2"></i>
+                                                File Saat Ini:
+                                            </h6>
+                                            <p class="mb-0 fw-bold">{{ task.file_path.split('/')[-1] }}</p>
+                                        </div>
+                                        <div>
+                                            <a href="{{ url_for('download_task_file', tid=task.id) }}" 
+                                               class="btn btn-success btn-sm me-2" 
+                                               target="_blank">
+                                                <i class="fas fa-download me-1"></i> Download
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Opsi Hapus File -->
+                            <div class="form-check mb-3 p-3 bg-danger bg-opacity-10 rounded">
+                                <input class="form-check-input" 
+                                       type="checkbox" 
+                                       id="remove_file" 
+                                       name="remove_file" 
+                                       value="yes">
+                                <label class="form-check-label text-danger fw-bold" for="remove_file">
+                                    <i class="fas fa-trash-alt me-2"></i>
+                                    Hapus file yang ada (centang jika ingin menghapus file)
+                                </label>
+                            </div>
+
+                            <label class="form-label text-muted">Upload File Baru (Opsional):</label>
+                            {% endif %}
+
+                            <!-- Input File -->
+                            <input type="file" 
+                                   class="form-control" 
+                                   id="file" 
+                                   name="file"
+                                   accept=".pdf,.doc,.docx,.txt,.zip,.rar,.png,.jpg,.jpeg,.gif">
+                            
+                            <!-- Info Format File -->
+                            <div class="mt-2 p-3 bg-light rounded border">
+                                <small class="text-muted">
+                                    <i class="fas fa-info-circle text-info me-1"></i>
+                                    <strong>Informasi Upload File:</strong>
+                                </small>
+                                <ul class="mb-0 mt-2 small text-muted">
+                                    <li><strong>Format yang diizinkan:</strong> PDF, DOC, DOCX, TXT, ZIP, RAR, PNG, JPG, JPEG, GIF</li>
+                                    <li><strong>Ukuran maksimal:</strong> 4 MB per file</li>
+                                    <li><strong>Kegunaan:</strong> Upload file ini untuk memberikan soal, template, atau materi pendukung tugas</li>
+                                    <li><strong>Catatan:</strong> Siswa akan mengupload file jawaban mereka secara terpisah</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Info Box -->
+                        <div class="alert alert-warning border-warning mb-4">
+                            <div class="d-flex">
+                                <div class="me-3">
+                                    <i class="fas fa-exclamation-triangle fs-4"></i>
+                                </div>
+                                <div>
+                                    <h6 class="alert-heading mb-2">
+                                        <strong>Penting untuk Diingat:</strong>
+                                    </h6>
+                                    <ul class="mb-0 small">
+                                        <li>File yang diupload di sini adalah <strong>file tugas untuk siswa</strong> (soal/template/materi pendukung)</li>
+                                        <li>Siswa akan mengupload <strong>file jawaban mereka</strong> melalui halaman upload tugas yang berbeda</li>
+                                        <li>Pastikan instruksi tugas sudah jelas agar siswa tidak bingung</li>
+                                        <li>File dapat diedit atau dihapus kapan saja sebelum atau setelah tugas dikumpulkan</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tombol Aksi -->
+                        <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
+                            <a href="{{ url_for('dashboard') }}" class="btn btn-secondary btn-lg">
+                                <i class="fas fa-arrow-left me-2"></i>Kembali ke Dashboard
+                            </a>
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-save me-2"></i>
+                                {{ 'Update Tugas' if edit else 'Buat Tugas' }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+}
+
+.card {
+    border: none;
+    border-radius: 15px;
+}
+
+.form-control:focus {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    border: none;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #c82333 0%, #bd2130 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+}
+
+.alert {
+    border-radius: 10px;
+}
+
+.text-primary {
+    color: #dc3545 !important;
+}
+</style>
+{% endblock %}

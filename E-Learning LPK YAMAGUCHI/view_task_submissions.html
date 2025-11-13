@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block title %}Submission Tugas - {{ task.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow mb-4">
+        <div class="card-header bg-info text-white">
+            <h4 class="mb-0">Detail Tugas</h4>
+        </div>
+        <div class="card-body">
+            <h5><strong>{{ task.title }}</strong></h5>
+            <p class="mb-2">{{ task.description }}</p>
+            {% if task.due_date %}
+            <p class="mb-0">
+                <i class="fas fa-calendar"></i> 
+                <strong>Deadline:</strong> {{ task.due_date.strftime('%d %B %Y, %H:%M') if task.due_date else '-' }}
+            </p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">
+                <i class="fas fa-file-upload"></i> Daftar Submission Siswa
+                <span class="badge bg-light text-dark ms-2">{{ submissions|length }} submission</span>
+            </h4>
+        </div>
+        <div class="card-body">
+            {% if submissions %}
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>No</th>
+                            <th>Nama Siswa</th>
+                            <th>File</th>
+                            <th>Waktu Upload</th>
+                            <th>Nilai</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for sub in submissions %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>
+                                <strong>{{ sub.full_name }}</strong><br>
+                                <small class="text-muted">@{{ sub.username }}</small>
+                            </td>
+                            <td>
+                                {% if sub.file_path %}
+                                    {% set clean_path = sub.file_path.replace('static/', '').replace('static\\', '').replace('\\', '/') %}
+                                    {% if clean_path.startswith('uploads/') %}
+                                        <a href="{{ url_for('download_file', filename=clean_path.replace('uploads/', '')) }}" 
+                                           target="_blank" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-download"></i> Lihat File
+                                        </a>
+                                    {% else %}
+                                        <a href="{{ url_for('download_file', filename=clean_path) }}" 
+                                           target="_blank" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-download"></i> Lihat File
+                                        </a>
+                                    {% endif %}
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ sub.submitted_at.strftime('%d/%m/%Y %H:%M') if sub.submitted_at else '-' }}</td>
+                            <td>
+                                {% if sub.score is not none %}
+                                    <span class="badge bg-success fs-6">{{ sub.score }}</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Belum dinilai</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if sub.graded_at %}
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-check"></i> Sudah Dinilai
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-warning">
+                                        <i class="fas fa-clock"></i> Menunggu Penilaian
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{{ url_for('grade_task_submission', submission_id=sub.id) }}" 
+                                   class="btn btn-sm btn-primary">
+                                    <i class="fas fa-star"></i> 
+                                    {% if sub.score is not none %}Edit Nilai{% else %}Beri Nilai{% endif %}
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Statistik -->
+            <div class="row mt-4">
+                <div class="col-md-4">
+                    <div class="card bg-light">
+                        <div class="card-body text-center">
+                            <h5>Total Submission</h5>
+                            <h3>{{ submissions|length }}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card bg-success text-white">
+                        <div class="card-body text-center">
+                            <h5>Sudah Dinilai</h5>
+                            <h3>{{ submissions|selectattr('score', 'defined')|list|length }}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card bg-warning">
+                        <div class="card-body text-center">
+                            <h5>Belum Dinilai</h5>
+                            <h3>{{ submissions|rejectattr('score', 'defined')|list|length }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i> Belum ada siswa yang mengumpulkan tugas ini.
+            </div>
+            {% endif %}
+
+            <div class="mt-4">
+                <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Kembali ke Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

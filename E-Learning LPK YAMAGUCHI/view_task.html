@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container my-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">
+                <i class="fas fa-tasks me-2"></i>{{ task.title }}
+            </h3>
+        </div>
+        
+        <div class="card-body">
+            <!-- Deskripsi Tugas -->
+            <div class="mb-4">
+                <h5 class="text-muted mb-2">
+                    <i class="fas fa-info-circle me-2"></i>Deskripsi Tugas
+                </h5>
+                <div class="border rounded p-3 bg-light">
+                    {{ task.description|safe }}
+                </div>
+            </div>
+
+            <!-- Deadline -->
+            {% if task.due_date %}
+            <div class="mb-4">
+                <h5 class="text-muted mb-2">
+                    <i class="fas fa-calendar-alt me-2"></i>Batas Waktu
+                </h5>
+                <p class="mb-0">
+                    <span class="badge bg-danger text-light fs-6">
+                        {{ task.due_date }}
+                    </span>
+                </p>
+            </div>
+            {% endif %}
+
+            <!-- File dari Guru -->
+            {% if task.file_path %}
+            <div class="mb-4">
+                <h5 class="text-muted mb-2">
+                    <i class="fas fa-file-download me-2"></i>File Tugas dari Guru
+                </h5>
+                <div class="alert alert-info d-flex align-items-center">
+                    <i class="fas fa-file-alt fa-2x me-3 text-danger"></i>
+                    <div class="flex-grow-1">
+                        <strong>File tersedia untuk diunduh</strong>
+                        <p class="mb-0 small">Silakan download file tugas dari guru</p>
+                    </div>
+                    <a href="{{ url_for('download_task_file', tid=task.id) }}" 
+                       class="btn btn-primary btn-sm">
+                        <i class="fas fa-download me-1"></i>Download File
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Untuk Siswa -->
+            {% if g.user and g.user.role == 'student' %}
+            <hr class="my-4">
+            
+            {% if submission %}
+                <div class="alert alert-success">
+                    <h5 class="alert-heading text-danger">
+                        <i class="fas fa-check-circle me-2"></i>Tugas Sudah Dikumpulkan
+                    </h5>
+                    <hr>
+                    <p class="mb-2">
+                        <strong>Waktu Submit:</strong> {{ submission.submitted_at }}
+                    </p>
+                    
+                    {% if submission.file_path %}
+                    <p class="mb-2">
+                        <strong>File Anda:</strong> 
+                        <a href="{{ url_for('download_file', filename=submission.file_path|normalize_path) }}" 
+                           class="text-decoration-none text-danger">
+                            <i class="fas fa-file me-1"></i>{{ submission.file_path|normalize_path }}
+                        </a>
+                    </p>
+                    {% endif %}
+                    
+                    {% if submission.score is not none %}
+                    <div class="mt-3 p-3 bg-white rounded border border-danger">
+                        <h6 class="text-danger mb-2">
+                            <i class="fas fa-star me-2"></i>Nilai
+                        </h6>
+                        <div class="d-flex align-items-center mb-2">
+                            <span class="display-6 fw-bold text-danger me-2">{{ submission.score }}</span>
+                            <span class="text-muted">/ 100</span>
+                        </div>
+                        
+                        {% if submission.feedback %}
+                        <div class="mt-3">
+                            <h6 class="text-muted mb-2">
+                                <i class="fas fa-comment-dots me-2"></i>Feedback dari Guru
+                            </h6>
+                            <div class="alert alert-light mb-0 border-start border-danger">
+                                {{ submission.feedback }}
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if submission.graded_at %}
+                        <p class="text-muted small mb-0 mt-2">
+                            <i class="fas fa-clock me-1"></i>Dinilai pada: {{ submission.graded_at }}
+                        </p>
+                        {% endif %}
+                    </div>
+                    {% else %}
+                    <div class="alert alert-warning mb-0 mt-3 border-start border-danger">
+                        <i class="fas fa-hourglass-half me-2"></i>
+                        Tugas Anda sedang menunggu penilaian dari guru
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="text-center mt-3">
+                    <a href="{{ url_for('upload_task', tid=task.id) }}" 
+                       class="btn btn-outline-danger me-2">
+                        <i class="fas fa-redo me-2"></i>Upload Ulang Tugas
+                    </a>
+
+                    <!-- 🗑️ Tombol Hapus Submission -->
+                    <a href="{{ url_for('delete_task_submission', submission_id=submission.id) }}" 
+                       class="btn btn-danger"
+                       onclick="return confirm('Apakah Anda yakin ingin menghapus tugas ini? Tindakan ini tidak dapat dibatalkan.');">
+                        <i class="fas fa-trash-alt me-2"></i>Hapus Tugas
+                    </a>
+                </div>
+            {% else %}
+                <div class="alert alert-warning border-start border-danger">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Anda belum mengumpulkan tugas ini</strong>
+                </div>
+                
+                <div class="text-center">
+                    <a href="{{ url_for('upload_task', tid=task.id) }}" 
+                       class="btn btn-primary btn-lg">
+                        <i class="fas fa-upload me-2"></i>Kirim Tugas Sekarang
+                    </a>
+                </div>
+            {% endif %}
+            {% endif %}
+
+            <!-- Untuk Guru/Admin -->
+            {% if g.user and g.user.role in ['sensei', 'admin'] %}
+            <hr class="my-4">
+            <div class="text-center">
+                <a href="{{ url_for('view_task_submissions', tid=task.id) }}" 
+                   class="btn btn-danger btn-lg">
+                    <i class="fas fa-users me-2"></i>Lihat Submisi Siswa
+                </a>
+                
+                <a href="{{ url_for('edit_task', tid=task.id) }}" 
+                   class="btn btn-outline-danger btn-lg ms-2">
+                    <i class="fas fa-edit me-2"></i>Edit Tugas
+                </a>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="card-footer bg-light">
+            <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Kembali ke Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Custom Styles -->
+<style>
+    .display-6 { font-size: 2.5rem; }
+    .card { border-radius: 10px; overflow: hidden; }
+    .card-header { border-bottom: 3px solid #b02a37; } /* merah tua */
+    .alert { border-left: 4px solid; }
+    .alert-success { border-left-color: #dc3545; }
+    .alert-warning { border-left-color: #dc3545; }
+    .alert-info { border-left-color: #dc3545; }
+    .btn-outline-danger:hover {
+        background-color: #dc3545 !important;
+        color: #fff !important;
+    }
+</style>
+{% endblock %}
