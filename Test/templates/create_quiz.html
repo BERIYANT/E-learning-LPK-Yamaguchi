@@ -1,0 +1,170 @@
+\{% extends "base.html" %}
+
+{% block title %}Buat Kuis Baru{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg">
+                <div class="card-header bg-gradient-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-plus-circle"></i> Buat Kuis Baru
+                    </h4>
+                    <small class="text-white-50">Mulai membuat kuis untuk siswa Anda</small>
+                </div>
+                <div class="card-body p-4">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Informasi:</strong> Setelah klik "Buat Kuis", Anda akan <u>langsung diarahkan</u> ke halaman tambah pertanyaan untuk mulai membuat soal kuis.
+                    </div>
+
+                    <form method="POST" action="{{ url_for('create_quiz') }}" id="createQuizForm">
+                        <div class="mb-4">
+                            <label for="title" class="form-label fw-bold">
+                                <i class="fas fa-heading"></i> Judul Kuis <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" 
+                                   class="form-control form-control-lg" 
+                                   id="title" 
+                                   name="title" 
+                                   placeholder="Contoh: Kuis Bahasa Jepang - Hiragana Dasar"
+                                   required
+                                   maxlength="200">
+                            <small class="text-muted">
+                                <i class="fas fa-lightbulb"></i> Berikan judul yang jelas dan deskriptif
+                            </small>
+                        </div>
+
+                        <div class="alert alert-light border">
+                            <h6 class="alert-heading">
+                                <i class="fas fa-clipboard-list"></i> Alur Pembuatan Kuis:
+                            </h6>
+                            <ol class="mb-0 ps-3">
+                                <li><strong>Isi judul kuis</strong> di form ini</li>
+                                <li><strong>Klik "Buat Kuis"</strong> → otomatis masuk ke halaman tambah pertanyaan</li>
+                                <li><strong>Tambahkan pertanyaan</strong> satu per satu dengan 5 opsi jawaban (A-E)</li>
+                                <li><strong>Upload gambar soal</strong> jika diperlukan (opsional)</li>
+                                <li><strong>Klik "Selesai"</strong> saat semua pertanyaan sudah ditambahkan</li>
+                            </ol>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-rocket"></i> Buat Kuis & Mulai Tambah Pertanyaan
+                            </button>
+                            <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left"></i> Kembali ke Dashboard
+                            </a>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-muted">
+                    <small>
+                        <i class="fas fa-info-circle"></i> 
+                        Pastikan Anda sudah memilih kelas sebelum membuat kuis
+                    </small>
+                </div>
+            </div>
+
+            <!-- Card Tips -->
+            <div class="card mt-4 border-info">
+                <div class="card-header bg-info text-white">
+                    <h6 class="mb-0">
+                        <i class="fas fa-lightbulb"></i> Tips Membuat Kuis yang Baik
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <ul class="mb-0">
+                        <li class="mb-2">
+                            <strong>Judul Spesifik:</strong> Gunakan judul yang mencerminkan materi yang diuji
+                        </li>
+                        <li class="mb-2">
+                            <strong>Pertanyaan Jelas:</strong> Buat pertanyaan yang mudah dipahami
+                        </li>
+                        <li class="mb-2">
+                            <strong>Gunakan Gambar:</strong> Upload gambar untuk pertanyaan yang membutuhkan visual
+                        </li>
+                        <li class="mb-2">
+                            <strong>Variasi Opsi:</strong> Buat 5 opsi jawaban yang masuk akal
+                        </li>
+                        <li>
+                            <strong>Cek Ulang:</strong> Pastikan jawaban benar sudah ditandai dengan tepat
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+}
+
+.card {
+    border: none;
+    border-radius: 15px;
+}
+
+.card-header {
+    border-radius: 15px 15px 0 0 !important;
+}
+
+.form-control:focus {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    border: none;
+    transition: all 0.3s;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+}
+
+.alert-info {
+    background-color: #e3f2fd;
+    border-color: #90caf9;
+    color: #1565c0;
+}
+
+.card-footer {
+    background-color: #f8f9fa;
+    border-radius: 0 0 15px 15px !important;
+}
+</style>
+
+<script>
+document.getElementById('createQuizForm').addEventListener('submit', function(e) {
+    const titleInput = document.getElementById('title');
+    const submitBtn = this.querySelector('button[type="submit"]');
+    
+    if (titleInput.value.trim() === '') {
+        e.preventDefault();
+        alert('⚠️ Judul kuis tidak boleh kosong!');
+        titleInput.focus();
+        return;
+    }
+    
+    // Tampilkan loading state
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Membuat kuis dan menyiapkan halaman pertanyaan...';
+    
+    // Optional: Tambahkan class untuk visual feedback
+    submitBtn.classList.add('loading');
+});
+</script>
+
+<style>
+.btn.loading {
+    opacity: 0.7;
+    cursor: wait;
+}
+</style>
+{% endblock %}

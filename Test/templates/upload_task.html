@@ -1,0 +1,220 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Tugas - {{ task.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('my_task_scores') }}">Tugas Saya</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Upload Tugas</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <!-- Info Tugas -->
+        <div class="col-md-5">
+            <div class="card mb-3 border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0"><i class="bi bi-info-circle"></i> Detail Tugas</h5>
+                </div>
+                <div class="card-body">
+                    <h5>{{ task.title }}</h5>
+                    <hr>
+                    <p><strong>Deskripsi:</strong></p>
+                    <div class="border-start border-3 border-danger ps-3">
+                        {{ task.description|safe }}
+                    </div>
+
+                    <hr>
+
+                    {% if task.due_date %}
+                    <p class="mb-2">
+                        <i class="bi bi-calendar-event text-danger"></i>
+                        <strong>Deadline:</strong>
+                        <span class="badge bg-danger">{{ task.due_date.strftime('%d %B %Y') }}</span>
+                    </p>
+                    {% endif %}
+
+                    {% if task.file_path %}
+                    <p class="mb-0">
+                        <i class="bi bi-file-earmark-arrow-down text-danger"></i>
+                        <strong>File dari Guru:</strong><br>
+                        <a href="{{ url_for('download_task_file', tid=task.id) }}"
+                           class="btn btn-sm btn-outline-danger mt-1">
+                            <i class="bi bi-download"></i> Download File Tugas
+                        </a>
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if existing_submission %}
+            <div class="card border-warning">
+                <div class="card-header bg-warning text-dark">
+                    <h6 class="mb-0"><i class="bi bi-check-circle"></i> File Yang Sudah Diupload</h6>
+                </div>
+                <div class="card-body">
+                    <p><strong>Status:</strong> <span class="badge bg-success">Sudah Mengumpulkan</span></p>
+                    <p><strong>Tanggal Upload:</strong><br>
+                        <i class="bi bi-clock"></i>
+                        {{ existing_submission.submitted_at.strftime('%d %B %Y, %H:%M WIB') if existing_submission.submitted_at else '-' }}
+                    </p>
+
+                    {% if existing_submission.file_path %}
+                    {% set filename = existing_submission.file_path.split('/')[-1] %}
+                    <p><strong>File Anda:</strong><br>
+                        <small class="text-muted">{{ filename }}</small>
+                    </p>
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('static', filename='uploads/' ~ filename) }}" target="_blank" class="btn btn-sm btn-outline-danger">
+                            <i class="bi bi-eye"></i> Lihat File
+                        </a>
+                        <a href="{{ url_for('static', filename='uploads/' ~ filename) }}" download class="btn btn-sm btn-outline-success">
+                            <i class="bi bi-download"></i> Download File
+                        </a>
+                    </div>
+                    {% endif %}
+
+                    <hr>
+
+                    {% if existing_submission.score %}
+                        <div class="alert alert-success mb-0">
+                            <h6><i class="bi bi-star-fill"></i> Sudah Dinilai</h6>
+                            <p class="mb-2">
+                                <strong>Nilai:</strong>
+                                <span class="badge bg-success fs-5">{{ existing_submission.score }}</span>
+                            </p>
+                            {% if existing_submission.feedback %}
+                            <p class="mb-2"><strong>Feedback Guru:</strong></p>
+                            <div class="border-start border-3 border-success ps-3">
+                                {{ existing_submission.feedback }}
+                            </div>
+                            {% endif %}
+                            {% if existing_submission.graded_at %}
+                            <p class="mb-0 mt-2">
+                                <small class="text-muted">
+                                    <i class="bi bi-calendar-check"></i>
+                                    Dinilai pada: {{ existing_submission.graded_at.strftime('%d %B %Y, %H:%M') }}
+                                </small>
+                            </p>
+                            {% endif %}
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info mb-0">
+                            <i class="bi bi-hourglass-split"></i>
+                            <strong>Menunggu Penilaian</strong>
+                            <p class="mb-0 mt-2">Tugas Anda sedang menunggu dinilai oleh guru.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Form Upload -->
+        <div class="col-md-7">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0"><i class="bi bi-cloud-upload"></i> Upload Tugas</h5>
+                </div>
+                <div class="card-body">
+
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ 'danger' if category == 'error' else 'success' if category == 'success' else 'info' }} alert-dismissible fade show" role="alert">
+                                    <i class="bi bi-{{ 'exclamation-circle' if category == 'error' else 'check-circle' if category == 'success' else 'info-circle' }}"></i>
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+
+                    <form method="POST" enctype="multipart/form-data">
+                        <div class="mb-4">
+                            <label for="file" class="form-label">
+                                <i class="bi bi-file-earmark-arrow-up"></i>
+                                Pilih File Tugas <span class="text-danger">*</span>
+                            </label>
+                            <input type="file"
+                                   class="form-control form-control-lg"
+                                   id="file"
+                                   name="file"
+                                   required
+                                   accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.zip,.rar,.jpg,.jpeg,.png"
+                                   onchange="showFileName(this)">
+                            <div id="fileNameDisplay" class="mt-2"></div>
+                            <small class="form-text text-muted">
+                                <i class="bi bi-info-circle"></i>
+                                Format: PDF, Word, PPT, Excel, ZIP, RAR, JPG, PNG (max 4MB)
+                            </small>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-danger btn-lg">
+                                <i class="bi bi-cloud-upload-fill"></i> Upload Tugas
+                            </button>
+                            <a href="{{ url_for('my_task_scores') }}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Kembali ke Tugas Saya
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Panduan -->
+            <div class="card mt-3 border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h6 class="mb-0"><i class="bi bi-question-circle"></i> Panduan Upload</h6>
+                </div>
+                <div class="card-body small">
+                    <ol class="mb-0">
+                        <li>Klik tombol <strong>"Pilih File"</strong></li>
+                        <li>Pilih file tugas dari komputer</li>
+                        <li>Pastikan format & ukuran sesuai</li>
+                        <li>Klik <strong>"Upload Tugas"</strong></li>
+                        <li>Tunggu konfirmasi berhasil</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function showFileName(input) {
+    const fileNameDisplay = document.getElementById('fileNameDisplay');
+    if (input.files && input.files[0]) {
+        const fileName = input.files[0].name;
+        const fileSize = (input.files[0].size / 1024 / 1024).toFixed(2);
+        if (fileSize > 4) {
+            fileNameDisplay.innerHTML = `
+                <div class="alert alert-danger mb-0">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    <strong>File terlalu besar!</strong> Ukuran: ${fileSize} MB (Maksimal 4 MB)
+                </div>`;
+            input.value = '';
+        } else {
+            fileNameDisplay.innerHTML = `
+                <div class="alert alert-success mb-0">
+                    <i class="bi bi-file-earmark-check"></i>
+                    <strong>File dipilih:</strong> ${fileName} (${fileSize} MB)
+                </div>`;
+        }
+    }
+}
+</script>
+
+<style>
+.card { box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075); }
+.card-header { font-weight: 600; }
+.alert { border-left: 4px solid; }
+.alert-danger { border-left-color: #dc3545; }
+.alert-success { border-left-color: #198754; }
+.alert-info { border-left-color: #0dcaf0; }
+.alert-warning { border-left-color: #ffc107; }
+</style>
+{% endblock %}

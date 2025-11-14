@@ -1,0 +1,325 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Kelas - LPK YAMAGUCHI PURWOKERTO{% endblock %}
+
+{% block extra_css %}
+<style>
+    .card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.08);
+        margin-bottom: 2rem;
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        color: white;
+        border-radius: 15px 15px 0 0 !important;
+        padding: 1.5rem;
+        border: none;
+    }
+
+    .card-header h4 {
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control, .form-select {
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+        padding: 0.75rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #dc3545;
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.15);
+    }
+
+    textarea.form-control {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        border: none;
+        padding: 0.75rem 2rem;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+        background: linear-gradient(135deg, #c82333 0%, #b02a37 100%);
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        border: none;
+        padding: 0.75rem 2rem;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-secondary:hover {
+        background-color: #5a6268;
+        transform: translateY(-2px);
+    }
+
+    .required-field::after {
+        content: " *";
+        color: #dc3545;
+        font-weight: bold;
+    }
+
+    .char-counter {
+        font-size: 0.875rem;
+        color: #6c757d;
+        text-align: right;
+        margin-top: 0.25rem;
+    }
+
+    .form-text {
+        color: #6c757d;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+
+    .alert-info {
+        border-radius: 10px;
+        border-left: 4px solid #0dcaf0;
+        background-color: #d1ecf1;
+        border-color: #bee5eb;
+    }
+
+    /* Animation */
+    .card {
+        animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .card-header h4 {
+            font-size: 1.25rem;
+        }
+
+        .btn-primary, .btn-secondary {
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+
+        .d-flex.gap-2 {
+            flex-direction: column-reverse !important;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('admin_classes') }}">Kelola Kelas</a></li>
+                <li class="breadcrumb-item active">Edit Kelas</li>
+            </ol>
+        </nav>
+
+        <!-- Edit Class Card -->
+        <div class="card">
+            <div class="card-header">
+                <h4>
+                    <i class="fas fa-edit"></i> Edit Kelas
+                </h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" action="{{ url_for('admin_edit_class', class_id=class_data.id) }}" id="editClassForm">
+                    <!-- Nama Kelas -->
+                    <div class="mb-4">
+                        <label for="name" class="form-label required-field">Nama Kelas</label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="name" 
+                               name="name" 
+                               value="{{ class_data.name }}"
+                               placeholder="Contoh: Kelas A - Pemula" 
+                               required 
+                               maxlength="100">
+                        <div class="form-text">
+                            <i class="fas fa-info-circle"></i> Masukkan nama kelas yang jelas dan deskriptif
+                        </div>
+                    </div>
+
+                    <!-- Jadwal -->
+                    <div class="mb-4">
+                        <label for="schedule" class="form-label">Jadwal</label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="schedule" 
+                               name="schedule" 
+                               value="{{ class_data.schedule or '' }}"
+                               placeholder="Contoh: Senin & Rabu, 19:00 - 21:00" 
+                               maxlength="200">
+                        <div class="form-text">
+                            <i class="fas fa-info-circle"></i> Opsional - Jadwal pertemuan kelas
+                        </div>
+                    </div>
+
+                    <!-- Deskripsi -->
+                    <div class="mb-4">
+                        <label for="description" class="form-label">Deskripsi</label>
+                        <textarea class="form-control" 
+                                  id="description" 
+                                  name="description" 
+                                  rows="5" 
+                                  placeholder="Deskripsi kelas, materi yang akan dipelajari, target pembelajaran, dll."
+                                  maxlength="1000">{{ class_data.description or '' }}</textarea>
+                        <div class="char-counter">
+                            <span id="charCount">0</span> / 1000 karakter
+                        </div>
+                        <div class="form-text">
+                            <i class="fas fa-info-circle"></i> Opsional - Informasi detail tentang kelas
+                        </div>
+                    </div>
+
+                    <!-- Info Box -->
+                    <div class="alert alert-info">
+                        <i class="fas fa-lightbulb"></i> 
+                        <strong>Tips:</strong> Pastikan informasi kelas jelas dan mudah dipahami oleh siswa dan guru.
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="d-flex gap-2 justify-content-end mt-4">
+                        <a href="{{ url_for('admin_classes') }}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Batal
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Simpan Perubahan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Info Card -->
+        <div class="card">
+            <div class="card-body">
+                <h6 class="mb-3"><i class="fas fa-info-circle text-primary"></i> Informasi Kelas</h6>
+                <div class="row">
+                    <div class="col-md-6 mb-2">
+                        <small class="text-muted">Dibuat pada:</small><br>
+                        <strong>{{ class_data.created_at.strftime('%d %B %Y, %H:%M') if class_data.created_at else '-' }}</strong>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <small class="text-muted">ID Kelas:</small><br>
+                        <strong>#{{ class_data.id }}</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Character counter untuk description
+    const descriptionTextarea = document.getElementById('description');
+    const charCountSpan = document.getElementById('charCount');
+    
+    function updateCharCount() {
+        const count = descriptionTextarea.value.length;
+        charCountSpan.textContent = count;
+        
+        // Ubah warna jika mendekati limit
+        if (count > 900) {
+            charCountSpan.style.color = '#dc3545';
+            charCountSpan.style.fontWeight = 'bold';
+        } else if (count > 800) {
+            charCountSpan.style.color = '#ffc107';
+            charCountSpan.style.fontWeight = '600';
+        } else {
+            charCountSpan.style.color = '#6c757d';
+            charCountSpan.style.fontWeight = 'normal';
+        }
+    }
+    
+    // Update on page load
+    updateCharCount();
+    
+    // Update on input
+    descriptionTextarea.addEventListener('input', updateCharCount);
+
+    // Form validation
+    document.getElementById('editClassForm').addEventListener('submit', function(e) {
+        const name = document.getElementById('name').value.trim();
+        
+        if (!name) {
+            e.preventDefault();
+            alert('Nama kelas harus diisi!');
+            document.getElementById('name').focus();
+            return false;
+        }
+        
+        // Confirmation
+        if (!confirm('Apakah Anda yakin ingin menyimpan perubahan kelas ini?')) {
+            e.preventDefault();
+            return false;
+        }
+    });
+
+    // Auto-focus on first input
+    document.getElementById('name').focus();
+
+    // Prevent accidental navigation
+    let formModified = false;
+    const formInputs = document.querySelectorAll('#editClassForm input, #editClassForm textarea');
+    
+    formInputs.forEach(input => {
+        input.addEventListener('change', () => {
+            formModified = true;
+        });
+    });
+
+    window.addEventListener('beforeunload', (e) => {
+        if (formModified) {
+            e.preventDefault();
+            e.returnValue = '';
+        }
+    });
+
+    // Reset flag on form submit
+    document.getElementById('editClassForm').addEventListener('submit', () => {
+        formModified = false;
+    });
+
+    // Smooth scroll to top on load
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+</script>
+{% endblock %}

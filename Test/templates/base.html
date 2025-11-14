@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}LPK YAMAGUCHI PURWOKERTO{% endblock %}</title>
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+  <style>
+    body { background-color: #f8f9fa; }
+    
+    .navbar-brand { 
+      font-weight: bold; 
+      font-size: 1.5rem;
+      letter-spacing: 0.5px;
+    }
+    .navbar-brand img {
+      border-radius: 50%;
+      border: 2px solid white;
+      object-fit: cover;
+      width: 50px;
+      height: 50px;
+    }
+
+    /* Ubah semua warna utama jadi merah */
+    .bg-primary { background-color: #c82333 !important; }
+    .text-primary { color: #c82333 !important; }
+    .btn-primary { 
+      background-color: #dc3545 !important; 
+      border-color: #dc3545 !important; 
+    }
+    .btn-primary:hover { 
+      background-color: #bb2d3b !important; 
+      border-color: #b02a37 !important; 
+    }
+    .badge.bg-danger { background-color: #dc3545 !important; }
+    .nav-link.text-white:hover {
+      color: #ffe5e5 !important;
+    }
+
+    .navbar .dropdown-toggle {
+      font-weight: 500;
+    }
+  </style>
+
+  {% block extra_css %}{% endblock %}
+</head>
+<body class="bg-light">
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+      <a class="navbar-brand fw-bold d-flex align-items-center" href="{{ url_for('index') }}">
+        <!-- Opsi 1: Gunakan nama file tanpa spasi -->
+        <img src="{{ url_for('static', filename='images/logo_yamaguchi.png') }}" 
+             alt="Logo LPK Yamaguchi" 
+             class="me-2"
+             onerror="this.onerror=null; this.src='{{ url_for('static', filename='images/default-logo.png') }}'; this.style.display='none';">
+        LPK YAMAGUCHI
+      </a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          {% if g.user %}
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                👋 {{ g.user.full_name or g.user.username }} 
+                {% if g.user.role == 'admin' %}
+                  <span class="badge bg-danger">Admin</span>
+                {% elif g.user.role == 'sensei' %}
+                  <span class="badge bg-success">Sensei</span>
+                {% else %}
+                  <span class="badge bg-info">Siswa</span>
+                {% endif %}
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="{{ url_for('dashboard') }}">
+                  <i class="fas fa-home"></i> Dashboard
+                </a></li>
+                <li><a class="dropdown-item" href="{{ url_for('profile') }}">
+                  <i class="fas fa-user"></i> Profil
+                </a></li>
+                
+                {% if g.user.role == 'student' %}
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="{{ url_for('my_certificates') }}">
+                  <i class="fas fa-certificate"></i> Sertifikat Saya
+                </a></li>
+                {% endif %}
+
+                {% if g.user.role == 'admin' %}
+                <li><hr class="dropdown-divider"></li>
+                <li><h6 class="dropdown-header">Menu Admin</h6></li>
+                <li><a class="dropdown-item" href="{{ url_for('admin_certificates') }}">
+                  <i class="fas fa-certificate"></i> Kelola Sertifikat
+                </a></li>
+                <li><a class="dropdown-item" href="{{ url_for('admin_users') }}">
+                  <i class="fas fa-users"></i> Monitoring Pengguna
+                </a></li>
+                <li><a class="dropdown-item" href="{{ url_for('admin_activities') }}">
+                  <i class="fas fa-chart-line"></i> Log Aktivitas
+                </a></li>
+                {% endif %}
+                
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item text-danger" href="{{ url_for('logout') }}">
+                  <i class="fas fa-sign-out-alt"></i> Logout
+                </a></li>
+              </ul>
+            </li>
+          {% else %}
+            <li class="nav-item">
+              <a href="{{ url_for('login') }}" class="btn btn-light px-4 py-2 rounded-pill">
+                <i class="fas fa-sign-in-alt"></i> Login
+              </a>
+            </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Flash messages -->
+  <div class="container mt-3">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, msg in messages %}
+          <div class="alert alert-{{ category if category != 'message' else 'info' }} alert-dismissible fade show" role="alert">
+            {{ msg }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
+
+  <!-- Main content -->
+  <div class="container mt-4 mb-5">
+    {% block content %}{% endblock %}
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

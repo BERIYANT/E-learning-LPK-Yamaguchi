@@ -1,0 +1,541 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Dashboard</h2>
+
+    {% if g.user.role == 'admin' %}
+        <!-- DASHBOARD ADMIN (tidak berubah) -->
+        <style>
+            .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+            .stat-card { background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-left: 4px solid; }
+            .stat-card h3 { color: #7f8c8d; font-size: 0.9rem; margin-bottom: 0.5rem; text-transform: uppercase; }
+            .stat-card .number { font-size: 2.5rem; font-weight: bold; color: #2c3e50; }
+            .stat-card.blue { border-color: #3498db; }
+            .stat-card.blue .number { color: #3498db; }
+            .stat-card.green { border-color: #27ae60; }
+            .stat-card.green .number { color: #27ae60; }
+            .stat-card.orange { border-color: #f39c12; }
+            .stat-card.orange .number { color: #f39c12; }
+            .stat-card.purple { border-color: #9b59b6; }
+            .stat-card.purple .number { color: #9b59b6; }
+            .stat-card.red { border-color: #e74c3c; }
+            .stat-card.red .number { color: #e74c3c; }
+            .stat-card.teal { border-color: #1abc9c; }
+            .stat-card.teal .number { color: #1abc9c; }
+            .quick-actions { margin-top: 2rem; }
+            .actions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem; }
+            .action-card { padding: 1.5rem; text-align: center; border-radius: 8px; color: white; text-decoration: none; display: block; transition: transform 0.3s; }
+            .action-card:hover { transform: translateY(-3px); text-decoration: none; color: white; }
+            .action-card h5 { margin-bottom: 0.5rem; font-size: 1.1rem; }
+            .action-card p { margin: 0; font-size: 0.9rem; opacity: 0.9; }
+        </style>
+
+        <div class="alert alert-info">
+            <strong>👋 Selamat datang, Admin!</strong> Kelola sistem LMS dari panel ini.
+        </div>
+
+        <h3 class="mt-4">📊 Statistik Sistem</h3>
+        <div class="stats-grid">
+            <div class="stat-card blue">
+                <h3>Total Siswa</h3>
+                <div class="number">{{ total_students }}</div>
+            </div>
+            <div class="stat-card green">
+                <h3>Total Guru</h3>
+                <div class="number">{{ total_teachers }}</div>
+            </div>
+            <div class="stat-card orange">
+                <h3>Total Materi</h3>
+                <div class="number">{{ total_materials }}</div>
+            </div>
+            <div class="stat-card purple">
+                <h3>Total Kuis</h3>
+                <div class="number">{{ total_quizzes }}</div>
+            </div>
+            <div class="stat-card red">
+                <h3>Total Tugas</h3>
+                <div class="number">{{ total_tasks }}</div>
+            </div>
+            <div class="stat-card teal">
+                <h3>Total Sertifikat</h3>
+                <div class="number">{{ total_certificates }}</div>
+            </div>
+        </div>
+
+        <div class="quick-actions">
+            <h3>⚡ Menu Cepat Admin</h3>
+            <div class="actions-grid">
+                <a href="{{ url_for('register') }}" class="action-card" style="background: #e74c3c;">
+                    <h5>➕ Daftarkan User Baru</h5>
+                    <p>Tambah siswa atau guru baru</p>
+                </a>
+                <a href="{{ url_for('admin_classes') }}" class="action-card" style="background: #9b59b6;">
+                    <h5>🏫 Kelola Kelas</h5>
+                    <p>Buat & kelola semua kelas</p>
+                </a>
+                <a href="{{ url_for('admin_certificates') }}" class="action-card" style="background: #f39c12;">
+                    <h5>🏆 Kelola Sertifikat</h5>
+                    <p>Lihat & kelola semua sertifikat</p>
+                </a>
+                <a href="{{ url_for('create_certificate') }}" class="action-card" style="background: #e67e22;">
+                    <h5>🎖️ Buat Sertifikat</h5>
+                    <p>Buat sertifikat baru untuk siswa</p>
+                </a>
+                <a href="{{ url_for('admin_users') }}" class="action-card" style="background: #3498db;">
+                    <h5>👥 Data Users</h5>
+                    <p>Lihat data guru dan siswa</p>
+                </a>
+                <a href="{{ url_for('admin_activities') }}" class="action-card" style="background: #27ae60;">
+                    <h5>📈 Log Aktivitas</h5>
+                    <p>Monitor aktivitas sistem</p>
+                </a>
+                <a href="{{ url_for('forum') }}" class="action-card" style="background: #16a085;">
+                    <h5>💬 Forum Diskusi</h5>
+                    <p>Monitor diskusi pengguna</p>
+                </a>
+            </div>
+        </div>
+
+        <!-- Daftar Sertifikat Terbaru -->
+        <div class="mt-5">
+            <h3>🎓 Sertifikat Terbaru</h3>
+            <div class="card">
+                <div class="card-body">
+                    {% if recent_certificates %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Nomor Sertifikat</th>
+                                    <th>Siswa</th>
+                                    <th>Kelas</th>
+                                    <th>Tanggal Terbit</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for cert in recent_certificates %}
+                                <tr>
+                                    <td><strong>{{ cert.certificate_number }}</strong></td>
+                                    <td>{{ cert.full_name or cert.username }}</td>
+                                    <td>
+                                        {% if cert.class_name %}
+                                            <span class="badge bg-secondary">{{ cert.class_name }}</span>
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td><small>{{ cert.issued_at.strftime('%d/%m/%Y') if cert.issued_at else '-' }}</small></td>
+                                    <td>
+                                        <a href="{{ url_for('view_certificate', cert_id=cert.id) }}" 
+                                           class="btn btn-sm btn-info">Lihat</a>
+                                        <a href="{{ url_for('edit_certificate', cert_id=cert.id) }}" 
+                                           class="btn btn-sm btn-warning">Edit</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="text-center mt-3">
+                        <a href="{{ url_for('admin_certificates') }}" class="btn btn-primary">
+                            Lihat Semua Sertifikat →
+                        </a>
+                    </div>
+                    {% else %}
+                    <div class="text-center text-muted py-4">
+                        <i class="fas fa-certificate fa-3x mb-3 d-block"></i>
+                        <p>Belum ada sertifikat yang dibuat.</p>
+                        <a href="{{ url_for('create_certificate') }}" class="btn btn-primary">
+                            Buat Sertifikat Pertama
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+    {% elif g.user.role == 'sensei' %}
+        <!-- DASHBOARD SENSEI (tidak berubah) -->
+        <div class="mb-3">
+            <a href="{{ url_for('forum') }}" class="btn btn-info">
+                <i class="fas fa-comments"></i> Forum Diskusi
+            </a>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">📋 Pilih Kelas untuk Mengelola</h5>
+            </div>
+            <div class="card-body">
+                {% if selected_class %}
+                    <div class="alert alert-success d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>Kelas yang dipilih:</strong> {{ selected_class.name }}
+                            <br>
+                            <small class="text-muted">{{ selected_class.description }}</small>
+                        </div>
+                        <a href="{{ url_for('clear_class_selection') }}" class="btn btn-sm btn-warning">
+                            Ganti Kelas
+                        </a>
+                    </div>
+                {% else %}
+                    <p class="text-muted mb-3">Silakan pilih kelas terlebih dahulu untuk mengelola materi, kuis, dan tugas:</p>
+                    <div class="row">
+                        {% for cls in all_classes %}
+                        <div class="col-md-4 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ cls.name }}</h5>
+                                    <p class="card-text text-muted small">{{ cls.description }}</p>
+                                    <a href="{{ url_for('select_class', class_id=cls.id) }}" 
+                                       class="btn btn-primary btn-sm w-100">
+                                        Pilih Kelas Ini
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="col-12">
+                            <p class="text-muted">Belum ada kelas tersedia.</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if selected_class %}
+        <hr>
+        <h3>📚 Materi</h3>
+        <a href="{{ url_for('create_material') }}" class="btn btn-primary btn-sm mb-2">+ Tambah Materi</a>
+        <ul class="list-group mb-4">
+            {% for mat in mats %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <a href="{{ url_for('view_material', mid=mat.id) }}" class="fw-bold">{{ mat.title }}</a><br>
+                    <small class="text-muted">{{ mat.created_at }}</small>
+                </div>
+                <div>
+                    <a href="{{ url_for('edit_material', mid=mat.id) }}" class="btn btn-warning btn-sm">Edit</a>
+                    <a href="{{ url_for('delete_material', mid=mat.id) }}" 
+                       class="btn btn-danger btn-sm"
+                       onclick="return confirm('Yakin ingin menghapus materi ini?')">Hapus</a>
+                </div>
+            </li>
+            {% else %}
+            <li class="list-group-item text-muted">Belum ada materi untuk kelas ini.</li>
+            {% endfor %}
+        </ul>
+
+        <hr>
+        <h3>🧠 Kuis</h3>
+        <a href="{{ url_for('create_quiz') }}" class="btn btn-primary btn-sm mb-2">+ Buat Kuis</a>
+        <ul class="list-group mb-4">
+            {% for quiz in quizzes %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="fw-bold">{{ quiz.title }}</span><br>
+                    <small class="text-muted">{{ quiz.created_at }}</small>
+                </div>
+                <div>
+                    <a href="{{ url_for('add_question', qid=quiz.id) }}" class="btn btn-secondary btn-sm">Tambah Pertanyaan</a>
+                    <a href="{{ url_for('edit_quiz', qid=quiz.id) }}" class="btn btn-warning btn-sm">Edit</a>
+                    <a href="{{ url_for('delete_quiz', qid=quiz.id) }}" 
+                       class="btn btn-danger btn-sm"
+                       onclick="return confirm('Yakin ingin menghapus kuis ini?')">Hapus</a>
+                </div>
+            </li>
+            {% else %}
+            <li class="list-group-item text-muted">Belum ada kuis untuk kelas ini.</li>
+            {% endfor %}
+        </ul>
+
+        <hr>
+        <h3>📄 Tugas</h3>
+        <a href="{{ url_for('create_task') }}" class="btn btn-primary btn-sm mb-2">+ Buat Tugas</a>
+        <ul class="list-group mb-4">
+            {% for task in tasks %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="fw-bold">{{ task.title }}</span><br>
+                    <small class="text-muted">Deadline: {{ task.due_date if task.due_date else 'Tidak ada deadline' }}</small>
+                </div>
+                <div class="btn-group" role="group">
+                    <a href="{{ url_for('view_task_submissions', tid=task.id) }}" 
+                       class="btn btn-info btn-sm">
+                        <i class="bi bi-people-fill"></i> Submissions
+                    </a>
+                    <a href="{{ url_for('edit_task', tid=task.id) }}" 
+                       class="btn btn-warning btn-sm">Edit</a>
+                    <a href="{{ url_for('delete_task', tid=task.id) }}" 
+                       class="btn btn-danger btn-sm"
+                       onclick="return confirm('Yakin ingin menghapus tugas ini?')">Hapus</a>
+                </div>
+            </li>
+            {% else %}
+            <li class="list-group-item text-muted">Belum ada tugas untuk kelas ini.</li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <div class="alert alert-info mt-4">
+            <strong>ℹ️ Info:</strong> Pilih kelas terlebih dahulu untuk mengelola materi, kuis, dan tugas.
+        </div>
+        {% endif %}
+
+    {% else %}
+        <!-- BAGIAN UNTUK SISWA - DENGAN STATUS INDICATOR -->
+        <div class="alert alert-success">
+            <strong>👋 Selamat datang, {{ g.user.full_name or g.user.username }}!</strong> Selamat belajar!
+        </div>
+
+        <!-- TOMBOL AKSES CEPAT UNTUK SISWA -->
+        <div class="mb-4">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <a href="{{ url_for('forum') }}" class="btn btn-info btn-lg w-100 d-flex align-items-center justify-content-center" style="height: 60px;">
+                        <i class="fas fa-comments me-2"></i> Forum Diskusi
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <a href="{{ url_for('my_quiz_history') }}" class="btn btn-warning btn-lg w-100 d-flex align-items-center justify-content-center" style="height: 60px;">
+                        <i class="bi bi-clock-history me-2"></i> Riwayat Kuis
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <a href="{{ url_for('my_certificates') }}" class="btn btn-primary btn-lg w-100 d-flex align-items-center justify-content-center" style="height: 60px;">
+                        <i class="bi bi-award me-2"></i> Sertifikat Saya
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+        <h3>📚 Materi</h3>
+        <ul class="list-group mb-4">
+            {% for mat in mats %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <a href="{{ url_for('view_material', mid=mat.id) }}" class="fw-bold">{{ mat.title }}</a><br>
+                    <small class="text-muted">{{ mat.created_at }}</small>
+                </div>
+                <div>
+                    <a href="{{ url_for('view_material', mid=mat.id) }}" class="btn btn-info btn-sm">Lihat</a>
+                </div>
+            </li>
+            {% else %}
+            <li class="list-group-item text-muted">Belum ada materi.</li>
+            {% endfor %}
+        </ul>
+
+        <hr>
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h3 class="mb-0">🧠 Kuis</h3>
+            <a href="{{ url_for('my_quiz_history') }}" class="btn btn-outline-warning btn-sm">
+                <i class="bi bi-clock-history"></i> Lihat Riwayat Kuis
+            </a>
+        </div>
+        <ul class="list-group mb-4">
+            {% for quiz in quizzes %}
+            <li class="list-group-item">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="flex-grow-1">
+                        <div class="d-flex align-items-center gap-2 mb-1">
+                            <span class="fw-bold">{{ quiz.title }}</span>
+                            {% if quiz.is_completed > 0 %}
+                                <span class="badge bg-success">
+                                    <i class="bi bi-check-circle-fill"></i> Sudah Dikerjakan
+                                </span>
+                            {% else %}
+                                <span class="badge bg-danger">
+                                    <i class="bi bi-exclamation-circle-fill"></i> Belum Dikerjakan
+                                </span>
+                            {% endif %}
+                        </div>
+                        <small class="text-muted">{{ quiz.created_at }}</small>
+                    </div>
+                    <div>
+                        {% if quiz.is_completed > 0 %}
+                            <a href="{{ url_for('my_quiz_history') }}" class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-eye"></i> Lihat Hasil
+                            </a>
+                        {% else %}
+                            <a href="{{ url_for('take_quiz', qid=quiz.id) }}" class="btn btn-success btn-sm">
+                                <i class="bi bi-pencil-square"></i> Kerjakan
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </li>
+            {% else %}
+            <li class="list-group-item text-muted">Belum ada kuis.</li>
+            {% endfor %}
+        </ul>
+
+        <hr>
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h3 class="mb-0">📄 Tugas</h3>
+            <a href="{{ url_for('my_task_scores') }}" class="btn btn-primary btn-sm">
+                <i class="bi bi-star-fill"></i> Lihat Semua Nilai Tugas
+            </a>
+        </div>
+        <ul class="list-group mb-4">
+            {% for task in tasks %}
+            <li class="list-group-item">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="flex-grow-1">
+                        <div class="d-flex align-items-center gap-2 mb-1">
+                            <span class="fw-bold">{{ task.title }}</span>
+                            {% if task.submission_id %}
+                                {% if task.score is not none %}
+                                    <span class="badge bg-success">
+                                        <i class="bi bi-check-circle-fill"></i> Dinilai ({{ task.score }})
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-warning text-dark">
+                                        <i class="bi bi-clock-fill"></i> Menunggu Penilaian
+                                    </span>
+                                {% endif %}
+                            {% else %}
+                                <span class="badge bg-danger">
+                                    <i class="bi bi-exclamation-circle-fill"></i> Belum Dikumpulkan
+                                </span>
+                            {% endif %}
+                        </div>
+                        <small class="text-muted">
+                            Deadline: {{ task.due_date if task.due_date else 'Tidak ada deadline' }}
+                            {% if task.submitted_at %}
+                                <br>Dikumpulkan: {{ task.submitted_at.strftime('%d/%m/%Y %H:%M') }}
+                            {% endif %}
+                        </small>
+                    </div>
+                    <div class="btn-group" role="group">
+                        <a href="{{ url_for('view_task', tid=task.id) }}" 
+                           class="btn btn-info btn-sm">
+                            <i class="bi bi-info-circle"></i> Detail
+                        </a>
+                        {% if not task.submission_id %}
+                            <a href="{{ url_for('upload_task', tid=task.id) }}" 
+                               class="btn btn-success btn-sm">
+                                <i class="bi bi-upload"></i> Kumpulkan
+                            </a>
+                        {% elif task.score is none %}
+                            <a href="{{ url_for('upload_task', tid=task.id) }}" 
+                               class="btn btn-warning btn-sm">
+                                <i class="bi bi-arrow-repeat"></i> Upload Ulang
+                            </a>
+                        {% else %}
+                            <a href="{{ url_for('my_task_scores') }}" 
+                               class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-star"></i> Lihat Nilai
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </li>
+            {% else %}
+            <li class="list-group-item text-muted">Belum ada tugas.</li>
+            {% endfor %}
+        </ul>
+
+        <!-- LINK KE FITUR SISWA -->
+        <hr>
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body text-center">
+                        <div class="mb-3">
+                            <i class="bi bi-clock-history text-warning" style="font-size: 3rem;"></i>
+                        </div>
+                        <h5 class="card-title">🕐 Riwayat Kuis</h5>
+                        <p class="card-text text-muted">Lihat semua kuis yang telah Anda kerjakan dan nilai yang diperoleh</p>
+                        <a href="{{ url_for('my_quiz_history') }}" class="btn btn-warning">
+                            <i class="bi bi-clock-history"></i> Lihat Riwayat
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body text-center">
+                        <div class="mb-3">
+                            <i class="bi bi-star-fill text-success" style="font-size: 3rem;"></i>
+                        </div>
+                        <h5 class="card-title">📋 Nilai Tugas Saya</h5>
+                        <p class="card-text text-muted">Lihat semua tugas dan nilai yang telah diberikan oleh guru</p>
+                        <a href="{{ url_for('my_task_scores') }}" class="btn btn-success">
+                            <i class="bi bi-clipboard-check"></i> Lihat Nilai Tugas
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body text-center">
+                        <div class="mb-3">
+                            <i class="bi bi-award-fill text-primary" style="font-size: 3rem;"></i>
+                        </div>
+                        <h5 class="card-title">🏆 Sertifikat Saya</h5>
+                        <p class="card-text text-muted">Lihat sertifikat yang telah Anda peroleh</p>
+                        <a href="{{ url_for('my_certificates') }}" class="btn btn-primary">
+                            <i class="bi bi-award"></i> Lihat Sertifikat
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+.btn-group .btn {
+    margin-left: 0;
+}
+
+/* Tombol Akses Cepat */
+.btn-lg {
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-lg:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* Card Styling */
+.card {
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+/* Badge Styling */
+.badge {
+    font-size: 0.75rem;
+    padding: 0.35em 0.65em;
+    font-weight: 600;
+}
+
+.badge i {
+    font-size: 0.9em;
+}
+
+/* List Group Item Enhanced */
+.list-group-item {
+    transition: background-color 0.2s ease;
+}
+
+.list-group-item:hover {
+    background-color: #f8f9fa;
+}
+
+/* Gap utility for older Bootstrap versions */
+.gap-2 {
+    gap: 0.5rem;
+}
+</style>
+{% endblock %}

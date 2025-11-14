@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+{% block title %}Nilai Tugas Saya{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">
+                <i class="fas fa-star"></i> Nilai Tugas Saya
+            </h4>
+        </div>
+        <div class="card-body">
+            {% if submissions %}
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>No</th>
+                            <th>Judul Tugas</th>
+                            <th>Deadline</th>
+                            <th>Waktu Upload</th>
+                            <th>Status</th>
+                            <th>Nilai</th>
+                            <th>Feedback</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for sub in submissions %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td><strong>{{ sub.task_title }}</strong></td>
+                            <td>
+                                {% if sub.due_date %}
+                                    {{ sub.due_date.strftime('%d/%m/%Y %H:%M') }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                            <td>{{ sub.submitted_at.strftime('%d/%m/%Y %H:%M') if sub.submitted_at else '-' }}</td>
+                            <td>
+                                {% if sub.score is not none %}
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-check-circle"></i> Sudah Dinilai
+                                    </span>
+                                    <br>
+                                    <small class="text-muted">
+                                        {{ sub.graded_at.strftime('%d/%m/%Y %H:%M') if sub.graded_at else '' }}
+                                    </small>
+                                {% else %}
+                                    <span class="badge bg-warning">
+                                        <i class="fas fa-clock"></i> Menunggu Penilaian
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                {% if sub.score is not none %}
+                                    {% if sub.score >= 80 %}
+                                        <span class="badge bg-success fs-5">{{ sub.score }}</span>
+                                    {% elif sub.score >= 60 %}
+                                        <span class="badge bg-warning fs-5">{{ sub.score }}</span>
+                                    {% else %}
+                                        <span class="badge bg-danger fs-5">{{ sub.score }}</span>
+                                    {% endif %}
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if sub.feedback %}
+                                    <button type="button" 
+                                            class="btn btn-sm btn-info" 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#feedbackModal{{ sub.id }}">
+                                        <i class="fas fa-comment"></i> Lihat Feedback
+                                    </button>
+
+                                    <!-- Modal Feedback -->
+                                    <div class="modal fade" id="feedbackModal{{ sub.id }}" tabindex="-1">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header bg-info text-white">
+                                                    <h5 class="modal-title">Feedback dari Guru</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p><strong>Tugas:</strong> {{ sub.task_title }}</p>
+                                                    <p><strong>Nilai:</strong> 
+                                                        <span class="badge bg-success">{{ sub.score }}</span>
+                                                    </p>
+                                                    <p><strong>Dinilai oleh:</strong> {{ sub.graded_by_name or 'Guru' }}</p>
+                                                    <hr>
+                                                    <p><strong>Feedback:</strong></p>
+                                                    <div class="alert alert-light">{{ sub.feedback }}</div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% elif sub.score is not none %}
+                                    <span class="text-muted">Tidak ada feedback</span>
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Statistik -->
+            <div class="row mt-4">
+                <div class="col-md-3">
+                    <div class="card bg-light">
+                        <div class="card-body text-center">
+                            <h6>Total Tugas</h6>
+                            <h3>{{ submissions|length }}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-success text-white">
+                        <div class="card-body text-center">
+                            <h6>Sudah Dinilai</h6>
+                            <h3>{{ submissions | selectattr('score', '!=', none) | list | length }}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-warning">
+                        <div class="card-body text-center">
+                            <h6>Belum Dinilai</h6>
+                            <h3>{{ submissions | rejectattr('score', '!=', none) | list | length }}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-info text-white">
+                        <div class="card-body text-center">
+                            <h6>Rata-rata Nilai</h6>
+                            <h3>
+                                {% set graded = submissions | selectattr('score', '!=', none) | list %}
+                                {% if graded %}
+                                    {{ (graded | map(attribute='score') | map('float') | sum / graded|length) | round(2) }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% else %}
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i> Anda belum mengumpulkan tugas apapun.
+            </div>
+            {% endif %}
+
+            <div class="mt-4">
+                <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Kembali ke Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
