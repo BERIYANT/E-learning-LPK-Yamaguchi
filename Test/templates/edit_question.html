@@ -45,11 +45,11 @@
                             <!-- Preview Gambar yang Sudah Ada -->
                             <div class="mb-2">
                                 <img src="{{ url_for('static', filename='uploads/' ~ (question.image_path | normalize_path)) }}" 
-                                     alt="Gambar Soal" class="img-fluid border rounded" style="max-width: 400px;">
+                                     alt="Gambar Soal" class="img-fluid border rounded">
                             </div>
                             {% endif %}
                             
-                            <input type="file" class="form-control" id="image" name="image" accept="image/*" onchange="previewImage(this)">
+                            <input type="file" class="form-control" id="image" name="image" accept="image/*" data-preview>
                             <small class="text-muted">
                                 {% if question.image_path %}
                                     Upload gambar baru untuk mengganti gambar yang ada
@@ -59,9 +59,9 @@
                             </small>
                             
                             <!-- Preview Gambar Baru -->
-                            <div id="imagePreview" class="mt-2" style="display: none;">
+                            <div id="imagePreview" class="mt-2 display-none">
                                 <p class="mb-1"><strong>Preview Gambar Baru:</strong></p>
-                                <img id="preview" src="" alt="Preview" class="img-fluid border rounded" style="max-width: 400px;">
+                                <img id="preview" src="" alt="Preview" class="img-fluid border rounded">
                             </div>
                         </div>
 
@@ -69,27 +69,27 @@
                             <label class="form-label">Pilihan Jawaban <span class="text-danger">*</span></label>
                             
                             <div class="input-group mb-2">
-                                <span class="input-group-text bg-primary text-white" style="width: 50px;">A</span>
+                                <span class="input-group-text bg-primary text-white" option-badge-a>A</span>
                                 <input type="text" class="form-control" name="a" value="{{ question.option_a }}" required>
                             </div>
 
                             <div class="input-group mb-2">
-                                <span class="input-group-text bg-success text-white" style="width: 50px;">B</span>
+                                <span class="input-group-text bg-success text-white" option-badge-b>B</span>
                                 <input type="text" class="form-control" name="b" value="{{ question.option_b }}" required>
                             </div>
 
                             <div class="input-group mb-2">
-                                <span class="input-group-text bg-warning text-dark" style="width: 50px;">C</span>
+                                <span class="input-group-text bg-warning text-dark" option-badge-c>C</span>
                                 <input type="text" class="form-control" name="c" value="{{ question.option_c }}" required>
                             </div>
 
                             <div class="input-group mb-2">
-                                <span class="input-group-text bg-info text-white" style="width: 50px;">D</span>
+                                <span class="input-group-text bg-info text-white" option-badge-d>D</span>
                                 <input type="text" class="form-control" name="d" value="{{ question.option_d }}" required>
                             </div>
 
                             <div class="input-group mb-2">
-                                <span class="input-group-text bg-danger text-white" style="width: 50px;">E</span>
+                                <span class="input-group-text bg-danger text-white" option-badge-e>E</span>
                                 <input type="text" class="form-control" name="e" value="{{ question.option_e }}" required>
                             </div>
                         </div>
@@ -120,23 +120,5 @@
     </div>
 </div>
 
-<script>
-function previewImage(input) {
-    const preview = document.getElementById('preview');
-    const previewDiv = document.getElementById('imagePreview');
-    
-    if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        
-        reader.onload = function(e) {
-            preview.src = e.target.result;
-            previewDiv.style.display = 'block';
-        }
-        
-        reader.readAsDataURL(input.files[0]);
-    } else {
-        previewDiv.style.display = 'none';
-    }
-}
-</script>
+
 {% endblock %}

@@ -41,9 +41,8 @@
                                 <i class="fas fa-edit"></i>
                             </a>
                             <a href="{{ url_for('admin_delete_class', class_id=class.id) }}" 
-                               class="btn btn-sm btn-danger" 
-                               onclick="return confirm('Yakin ingin menghapus kelas ini? Semua data terkait (materi, kuis, tugas) akan ikut terhapus!')"
-                               title="Hapus">
+                               class="btn btn-sm btn-danger"
+                               title="Hapus" data-confirm="Apakah Anda yakin ingin menghapus?">
                                 <i class="fas fa-trash"></i>
                             </a>
                         </div>

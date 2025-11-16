@@ -121,8 +121,7 @@
 
                     <!-- 🗑️ Tombol Hapus Submission -->
                     <a href="{{ url_for('delete_task_submission', submission_id=submission.id) }}" 
-                       class="btn btn-danger"
-                       onclick="return confirm('Apakah Anda yakin ingin menghapus tugas ini? Tindakan ini tidak dapat dibatalkan.');">
+                       class="btn btn-danger" data-confirm="Apakah Anda yakin ingin menghapus?">
                         <i class="fas fa-trash-alt me-2"></i>Hapus Tugas
                     </a>
                 </div>
@@ -167,17 +166,5 @@
 </div>
 
 <!-- Custom Styles -->
-<style>
-    .display-6 { font-size: 2.5rem; }
-    .card { border-radius: 10px; overflow: hidden; }
-    .card-header { border-bottom: 3px solid #b02a37; } /* merah tua */
-    .alert { border-left: 4px solid; }
-    .alert-success { border-left-color: #dc3545; }
-    .alert-warning { border-left-color: #dc3545; }
-    .alert-info { border-left-color: #dc3545; }
-    .btn-outline-danger:hover {
-        background-color: #dc3545 !important;
-        color: #fff !important;
-    }
-</style>
+
 {% endblock %}

@@ -88,8 +88,7 @@
                                                     <i class="fas fa-key"></i>
                                                 </a>
                                                 <a href="{{ url_for('admin_delete_user', user_id=teacher.id) }}" 
-                                                   class="btn btn-danger" title="Hapus User"
-                                                   onclick="return confirm('⚠️ PERINGATAN!\n\nYakin ingin menghapus guru {{ teacher.username }}?\n\nSemua data berikut akan TERHAPUS PERMANEN:\n✗ {{ teacher.total_materials }} Materi\n✗ {{ teacher.total_quizzes }} Kuis (beserta soal dan jawaban siswa)\n✗ {{ teacher.total_tasks }} Tugas (beserta submission siswa)\n✗ Post forum yang dibuat\n\nTindakan ini TIDAK DAPAT DIBATALKAN!')">
+                                                   class="btn btn-danger" title="Hapus User" data-confirm="Apakah Anda yakin ingin menghapus?">
                                                     <i class="fas fa-trash"></i>
                                                 </a>
                                             </div>
@@ -190,8 +189,7 @@
                                                     <i class="fas fa-key"></i>
                                                 </a>
                                                 <a href="{{ url_for('admin_delete_user', user_id=student.id) }}" 
-                                                   class="btn btn-danger" title="Hapus User"
-                                                   onclick="return confirm('⚠️ PERINGATAN!\n\nYakin ingin menghapus siswa {{ student.username }}?\n\nSemua data berikut akan TERHAPUS PERMANEN:\n✗ Nilai kuis ({{ student.total_quiz_taken or 0 }} kuis)\n✗ Tugas yang dikumpulkan ({{ student.total_task_submitted or 0 }} tugas)\n✗ Post forum yang dibuat\n✗ Sertifikat yang diterima\n\nTindakan ini TIDAK DAPAT DIBATALKAN!')">
+                                                   class="btn btn-danger" title="Hapus User" data-confirm="Apakah Anda yakin ingin menghapus?">
                                                     <i class="fas fa-trash"></i>
                                                 </a>
                                             </div>
@@ -239,10 +237,5 @@
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
-<style>
-.btn-group-sm .btn {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.875rem;
-}
-</style>
+
 {% endblock %}

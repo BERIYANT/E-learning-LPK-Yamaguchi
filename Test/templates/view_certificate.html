@@ -117,8 +117,7 @@
                                         <!-- ⬇️ PERBAIKAN: Gunakan route download untuk preview gambar -->
                                         <img src="{{ url_for('download_certificate_file', cert_id=cert.id) }}" 
                                              alt="Sertifikat {{ cert.certificate_number }}" 
-                                             class="img-fluid border rounded shadow"
-                                             style="max-width: 100%; height: auto; max-height: 800px;">
+                                             class="img-fluid border rounded shadow">
                                     </div>
                                 </div>
                             </div>
@@ -170,8 +169,7 @@
                                 <i class="fas fa-edit"></i> Edit
                             </a>
                             <a href="{{ url_for('delete_certificate', cert_id=cert.id) }}" 
-                               class="btn btn-danger"
-                               onclick="return confirm('Apakah Anda yakin ingin menghapus sertifikat ini?')">
+                               class="btn btn-danger" data-confirm="Apakah Anda yakin ingin menghapus?">
                                 <i class="fas fa-trash"></i> Hapus
                             </a>
                         </div>

@@ -5,30 +5,7 @@
 
     {% if g.user.role == 'admin' %}
         <!-- DASHBOARD ADMIN (tidak berubah) -->
-        <style>
-            .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
-            .stat-card { background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-left: 4px solid; }
-            .stat-card h3 { color: #7f8c8d; font-size: 0.9rem; margin-bottom: 0.5rem; text-transform: uppercase; }
-            .stat-card .number { font-size: 2.5rem; font-weight: bold; color: #2c3e50; }
-            .stat-card.blue { border-color: #3498db; }
-            .stat-card.blue .number { color: #3498db; }
-            .stat-card.green { border-color: #27ae60; }
-            .stat-card.green .number { color: #27ae60; }
-            .stat-card.orange { border-color: #f39c12; }
-            .stat-card.orange .number { color: #f39c12; }
-            .stat-card.purple { border-color: #9b59b6; }
-            .stat-card.purple .number { color: #9b59b6; }
-            .stat-card.red { border-color: #e74c3c; }
-            .stat-card.red .number { color: #e74c3c; }
-            .stat-card.teal { border-color: #1abc9c; }
-            .stat-card.teal .number { color: #1abc9c; }
-            .quick-actions { margin-top: 2rem; }
-            .actions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem; }
-            .action-card { padding: 1.5rem; text-align: center; border-radius: 8px; color: white; text-decoration: none; display: block; transition: transform 0.3s; }
-            .action-card:hover { transform: translateY(-3px); text-decoration: none; color: white; }
-            .action-card h5 { margin-bottom: 0.5rem; font-size: 1.1rem; }
-            .action-card p { margin: 0; font-size: 0.9rem; opacity: 0.9; }
-        </style>
+        
 
         <div class="alert alert-info">
             <strong>👋 Selamat datang, Admin!</strong> Kelola sistem LMS dari panel ini.
@@ -65,31 +42,31 @@
         <div class="quick-actions">
             <h3>⚡ Menu Cepat Admin</h3>
             <div class="actions-grid">
-                <a href="{{ url_for('register') }}" class="action-card" style="background: #e74c3c;">
+                <a href="{{ url_for('register') }}" class="action-card action-card-register">
                     <h5>➕ Daftarkan User Baru</h5>
                     <p>Tambah siswa atau guru baru</p>
                 </a>
-                <a href="{{ url_for('admin_classes') }}" class="action-card" style="background: #9b59b6;">
+                <a href="{{ url_for('admin_classes') }}" class="action-card action-card-classes">
                     <h5>🏫 Kelola Kelas</h5>
                     <p>Buat & kelola semua kelas</p>
                 </a>
-                <a href="{{ url_for('admin_certificates') }}" class="action-card" style="background: #f39c12;">
+                <a href="{{ url_for('admin_certificates') }}" class="action-card action-card-certificates">
                     <h5>🏆 Kelola Sertifikat</h5>
                     <p>Lihat & kelola semua sertifikat</p>
                 </a>
-                <a href="{{ url_for('create_certificate') }}" class="action-card" style="background: #e67e22;">
+                <a href="{{ url_for('create_certificate') }}" class="action-card action-card-create-cert">
                     <h5>🎖️ Buat Sertifikat</h5>
                     <p>Buat sertifikat baru untuk siswa</p>
                 </a>
-                <a href="{{ url_for('admin_users') }}" class="action-card" style="background: #3498db;">
+                <a href="{{ url_for('admin_users') }}" class="action-card action-card-users">
                     <h5>👥 Data Users</h5>
                     <p>Lihat data guru dan siswa</p>
                 </a>
-                <a href="{{ url_for('admin_activities') }}" class="action-card" style="background: #27ae60;">
+                <a href="{{ url_for('admin_activities') }}" class="action-card action-card-activities">
                     <h5>📈 Log Aktivitas</h5>
                     <p>Monitor aktivitas sistem</p>
                 </a>
-                <a href="{{ url_for('forum') }}" class="action-card" style="background: #16a085;">
+                <a href="{{ url_for('forum') }}" class="action-card action-card-forum">
                     <h5>💬 Forum Diskusi</h5>
                     <p>Monitor diskusi pengguna</p>
                 </a>
@@ -158,7 +135,7 @@
     {% elif g.user.role == 'sensei' %}
         <!-- DASHBOARD SENSEI (tidak berubah) -->
         <div class="mb-3">
-            <a href="{{ url_for('forum') }}" class="btn btn-info">
+            <a href="{{ url_for('forum') }}" class="btn btn-info" dashboard-btn-large>
                 <i class="fas fa-comments"></i> Forum Diskusi
             </a>
         </div>
@@ -219,8 +196,7 @@
                 <div>
                     <a href="{{ url_for('edit_material', mid=mat.id) }}" class="btn btn-warning btn-sm">Edit</a>
                     <a href="{{ url_for('delete_material', mid=mat.id) }}" 
-                       class="btn btn-danger btn-sm"
-                       onclick="return confirm('Yakin ingin menghapus materi ini?')">Hapus</a>
+                       class="btn btn-danger btn-sm" data-confirm="Apakah Anda yakin ingin menghapus?">Hapus</a>
                 </div>
             </li>
             {% else %}
@@ -242,8 +218,7 @@
                     <a href="{{ url_for('add_question', qid=quiz.id) }}" class="btn btn-secondary btn-sm">Tambah Pertanyaan</a>
                     <a href="{{ url_for('edit_quiz', qid=quiz.id) }}" class="btn btn-warning btn-sm">Edit</a>
                     <a href="{{ url_for('delete_quiz', qid=quiz.id) }}" 
-                       class="btn btn-danger btn-sm"
-                       onclick="return confirm('Yakin ingin menghapus kuis ini?')">Hapus</a>
+                       class="btn btn-danger btn-sm" data-confirm="Apakah Anda yakin ingin menghapus?">Hapus</a>
                 </div>
             </li>
             {% else %}
@@ -269,8 +244,7 @@
                     <a href="{{ url_for('edit_task', tid=task.id) }}" 
                        class="btn btn-warning btn-sm">Edit</a>
                     <a href="{{ url_for('delete_task', tid=task.id) }}" 
-                       class="btn btn-danger btn-sm"
-                       onclick="return confirm('Yakin ingin menghapus tugas ini?')">Hapus</a>
+                       class="btn btn-danger btn-sm" data-confirm="Apakah Anda yakin ingin menghapus?">Hapus</a>
                 </div>
             </li>
             {% else %}
@@ -293,17 +267,17 @@
         <div class="mb-4">
             <div class="row g-3">
                 <div class="col-md-4">
-                    <a href="{{ url_for('forum') }}" class="btn btn-info btn-lg w-100 d-flex align-items-center justify-content-center" style="height: 60px;">
+                    <a href="{{ url_for('forum') }}" class="btn btn-info btn-lg w-100 d-flex align-items-center justify-content-center" dashboard-btn-large>
                         <i class="fas fa-comments me-2"></i> Forum Diskusi
                     </a>
                 </div>
                 <div class="col-md-4">
-                    <a href="{{ url_for('my_quiz_history') }}" class="btn btn-warning btn-lg w-100 d-flex align-items-center justify-content-center" style="height: 60px;">
+                    <a href="{{ url_for('my_quiz_history') }}" class="btn btn-warning btn-lg w-100 d-flex align-items-center justify-content-center">
                         <i class="bi bi-clock-history me-2"></i> Riwayat Kuis
                     </a>
                 </div>
                 <div class="col-md-4">
-                    <a href="{{ url_for('my_certificates') }}" class="btn btn-primary btn-lg w-100 d-flex align-items-center justify-content-center" style="height: 60px;">
+                    <a href="{{ url_for('my_certificates') }}" class="btn btn-primary btn-lg w-100 d-flex align-items-center justify-content-center">
                         <i class="bi bi-award me-2"></i> Sertifikat Saya
                     </a>
                 </div>
@@ -445,7 +419,7 @@
                 <div class="card h-100 shadow-sm">
                     <div class="card-body text-center">
                         <div class="mb-3">
-                            <i class="bi bi-clock-history text-warning" style="font-size: 3rem;"></i>
+                            <i class="bi bi-clock-history text-warning" dashboard-icon-large"></i>
                         </div>
                         <h5 class="card-title">🕐 Riwayat Kuis</h5>
                         <p class="card-text text-muted">Lihat semua kuis yang telah Anda kerjakan dan nilai yang diperoleh</p>
@@ -459,7 +433,7 @@
                 <div class="card h-100 shadow-sm">
                     <div class="card-body text-center">
                         <div class="mb-3">
-                            <i class="bi bi-star-fill text-success" style="font-size: 3rem;"></i>
+                            <i class="bi bi-star-fill text-success" dashboard-icon-large"></i>
                         </div>
                         <h5 class="card-title">📋 Nilai Tugas Saya</h5>
                         <p class="card-text text-muted">Lihat semua tugas dan nilai yang telah diberikan oleh guru</p>
@@ -473,7 +447,7 @@
                 <div class="card h-100 shadow-sm">
                     <div class="card-body text-center">
                         <div class="mb-3">
-                            <i class="bi bi-award-fill text-primary" style="font-size: 3rem;"></i>
+                            <i class="bi bi-award-fill text-primary" dashboard-icon-large"></i>
                         </div>
                         <h5 class="card-title">🏆 Sertifikat Saya</h5>
                         <p class="card-text text-muted">Lihat sertifikat yang telah Anda peroleh</p>
@@ -487,55 +461,5 @@
     {% endif %}
 </div>
 
-<style>
-.btn-group .btn {
-    margin-left: 0;
-}
 
-/* Tombol Akses Cepat */
-.btn-lg {
-    font-weight: 600;
-    transition: all 0.3s ease;
-}
-
-.btn-lg:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-}
-
-/* Card Styling */
-.card {
-    transition: transform 0.3s ease;
-}
-
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-}
-
-/* Badge Styling */
-.badge {
-    font-size: 0.75rem;
-    padding: 0.35em 0.65em;
-    font-weight: 600;
-}
-
-.badge i {
-    font-size: 0.9em;
-}
-
-/* List Group Item Enhanced */
-.list-group-item {
-    transition: background-color 0.2s ease;
-}
-
-.list-group-item:hover {
-    background-color: #f8f9fa;
-}
-
-/* Gap utility for older Bootstrap versions */
-.gap-2 {
-    gap: 0.5rem;
-}
-</style>
 {% endblock %}

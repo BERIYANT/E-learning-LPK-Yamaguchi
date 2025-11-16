@@ -80,7 +80,7 @@
                                    class="form-control" 
                                    id="file" 
                                    name="file"
-                                   accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.jpg,.jpeg,.png,.gif,.zip,.rar">
+                                   accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.jpg,.jpeg,.png,.gif,.zip,.rar" data-show-filename>
                             <small class="text-muted">
                                 <i class="fas fa-info-circle"></i> 
                                 Format yang didukung: PDF, Word, PowerPoint, Gambar, ZIP, RAR (Max 4MB)
@@ -123,24 +123,5 @@
     </div>
 </div>
 
-<style>
-    .form-control:focus {
-        border-color: #0d6efd;
-        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-    }
-    
-    .card {
-        border-radius: 12px;
-        border: none;
-    }
-    
-    .card-header {
-        border-radius: 12px 12px 0 0 !important;
-    }
-    
-    textarea.form-control {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        line-height: 1.6;
-    }
-</style>
+
 {% endblock %}
