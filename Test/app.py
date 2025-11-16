@@ -218,16 +218,36 @@ def register():
     classes = cur.fetchall()
 
     if request.method == 'POST':
-        username = request.form['username'].strip()
-        password = generate_password_hash(request.form['password'])
+        # ✅ VALIDASI INPUT: Gunakan .get() dengan default value untuk mencegah KeyError
+        username = request.form.get('username', '').strip()
+        password = request.form.get('password', '')
         full_name = request.form.get('full_name', '').strip()
         role = request.form.get('role', 'student')
         class_id = request.form.get('class_id')
 
+        # ✅ VALIDASI: Cek field tidak boleh kosong
+        if not username:
+            flash("Username tidak boleh kosong.", "danger")
+            cur.close()
+            return render_template('register.html', classes=classes)
+        
+        if not password:
+            flash("Password tidak boleh kosong.", "danger")
+            cur.close()
+            return render_template('register.html', classes=classes)
+        
+        if not full_name:
+            flash("Nama lengkap tidak boleh kosong.", "danger")
+            cur.close()
+            return render_template('register.html', classes=classes)
+
+        # Hash password setelah validasi
+        password_hash = generate_password_hash(password)
+
         cur2 = db.cursor()
         try:
             cur2.execute("INSERT INTO users (username, password, role, full_name) VALUES (%s, %s, %s, %s)",
-                         (username, password, role, full_name))
+                         (username, password_hash, role, full_name))
             user_id = cur2.lastrowid
 
             if class_id and role == 'student':
@@ -235,9 +255,20 @@ def register():
             db.commit()
             flash(f"User {username} berhasil didaftarkan sebagai {role}.", "success")
             return redirect(url_for('admin_users'))
-        except mysql.connector.IntegrityError:
+        except mysql.connector.IntegrityError as e:
+            # ✅ ERROR HANDLING: Rollback untuk mencegah state inconsistent
+            db.rollback()
+            # ✅ LOGGING: Catat error untuk debugging
+            app.logger.error(f"IntegrityError saat registrasi user {username}: {str(e)}")
             flash("Username sudah digunakan.", "danger")
+        except Exception as e:
+            # ✅ ERROR HANDLING: Tangkap error umum lainnya
+            db.rollback()
+            # ✅ LOGGING: Catat error untuk debugging
+            app.logger.error(f"Error saat registrasi user {username}: {str(e)}")
+            flash(f"Terjadi kesalahan saat mendaftarkan user: {str(e)}", "danger")
         finally:
+            # ✅ CLEANUP: Pastikan cursor ditutup
             cur2.close()
     
     cur.close()
