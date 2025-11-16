@@ -30,8 +30,14 @@
         // ✅ SECURITY: Input Sanitization
         function sanitizeInput(input) {
             if (!input) return input;
-            // Remove HTML tags
-            return input.replace(/<[^>]*>/g, '');
+            // Remove HTML tags - multiple passes to prevent incomplete sanitization
+            let sanitized = input;
+            let previousLength;
+            do {
+                previousLength = sanitized.length;
+                sanitized = sanitized.replace(/<[^>]*>/g, '');
+            } while (sanitized.length !== previousLength);
+            return sanitized;
         }
         
         // ✅ SECURITY: Form Validation & Rate Limiting

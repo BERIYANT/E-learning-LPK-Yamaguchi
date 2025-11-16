@@ -4,7 +4,11 @@
 {% block extra_css %}
   <link rel="stylesheet" href="{{ url_for('static', filename='css/edit_profile.css') }}">
 <!-- Cropper.js CSS -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
+<link rel="stylesheet" 
+      href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css" 
+      integrity="sha512-4VmVeTpCd1yViPJKZBbH2V8tKCbGhLPVqazw9LvJMiDkxZADTHLzrH6GqlPLztRlkHJ4U8FTKl0CvuJPRO3gXA==" 
+      crossorigin="anonymous" 
+      referrerpolicy="no-referrer">
 {% endblock %}
 
 {% block content %}
@@ -117,7 +121,10 @@
 
 {% block extra_js %}
 <!-- Cropper.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js" 
+        integrity="sha512-9KkIqdfN7ipEW6B6k+Aq20PV31bjODg4AA52W+e+OhE9+J2juyCGCBG0SBLpmYAXFg4uBdRqf3RkABrh3+GxMg==" 
+        crossorigin="anonymous" 
+        referrerpolicy="no-referrer"></script>
 
 <script src="{{ url_for('static', filename='js/edit_profile.js') }}"></script>
 {% endblock %}
