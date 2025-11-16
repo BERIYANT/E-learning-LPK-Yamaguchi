@@ -6,48 +6,19 @@
   <title>{% block title %}LPK YAMAGUCHI PURWOKERTO{% endblock %}</title>
 
   <!-- Bootstrap 5 -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" 
+        rel="stylesheet" 
+        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" 
+        crossorigin="anonymous">
   <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-
-  <style>
-    body { background-color: #f8f9fa; }
-    
-    .navbar-brand { 
-      font-weight: bold; 
-      font-size: 1.5rem;
-      letter-spacing: 0.5px;
-    }
-    .navbar-brand img {
-      border-radius: 50%;
-      border: 2px solid white;
-      object-fit: cover;
-      width: 50px;
-      height: 50px;
-    }
-
-    /* Ubah semua warna utama jadi merah */
-    .bg-primary { background-color: #c82333 !important; }
-    .text-primary { color: #c82333 !important; }
-    .btn-primary { 
-      background-color: #dc3545 !important; 
-      border-color: #dc3545 !important; 
-    }
-    .btn-primary:hover { 
-      background-color: #bb2d3b !important; 
-      border-color: #b02a37 !important; 
-    }
-    .badge.bg-danger { background-color: #dc3545 !important; }
-    .nav-link.text-white:hover {
-      color: #ffe5e5 !important;
-    }
-
-    .navbar .dropdown-toggle {
-      font-weight: 500;
-    }
-  </style>
-
-  {% block extra_css %}{% endblock %}
+  <link rel="stylesheet" 
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" 
+        integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" 
+        crossorigin="anonymous" 
+        referrerpolicy="no-referrer">
+{% block extra_css %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+{% endblock %}
 </head>
 <body class="bg-light">
 
@@ -148,7 +119,9 @@
   </div>
 
   <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" 
+          integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" 
+          crossorigin="anonymous"></script>
   {% block extra_js %}{% endblock %}
 </body>
 </html>

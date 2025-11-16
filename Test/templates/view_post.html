@@ -2,6 +2,11 @@
 
 {% block title %}{{ post.title }} - Forum Diskusi{% endblock %}
 
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/view_post.css') }}">
+{% endblock %}
+
 {% block content %}
 <div class="container mt-4">
     <!-- Breadcrumb -->
@@ -173,19 +178,4 @@
     </div>
 </div>
 
-<style>
-.post-content, .reply-content {
-    line-height: 1.6;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-}
-
-.reply-item:hover {
-    background-color: #f8f9fa;
-    border-radius: 5px;
-    padding: 10px;
-    margin-left: -10px;
-    margin-right: -10px;
-}
-</style>
 {% endblock %}
