@@ -1,0 +1,11 @@
+.display-6 { font-size: 2.5rem; }
+    .card { border-radius: 10px; overflow: hidden; }
+    .card-header { border-bottom: 3px solid #b02a37; } /* merah tua */
+    .alert { border-left: 4px solid; }
+    .alert-success { border-left-color: #dc3545; }
+    .alert-warning { border-left-color: #dc3545; }
+    .alert-info { border-left-color: #dc3545; }
+    .btn-outline-danger:hover {
+        background-color: #dc3545 !important;
+        color: #fff !important;
+    }

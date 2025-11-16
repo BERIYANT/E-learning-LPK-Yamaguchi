@@ -2,6 +2,11 @@
 
 {% block title %}Riwayat Kuis Saya{% endblock %}
 
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/my_quiz_history.css') }}">
+{% endblock %}
+
 {% block content %}
 <div class="container mt-4">
     <nav aria-label="breadcrumb">
@@ -152,31 +157,4 @@
     {% endif %}
 </div>
 
-<style>
-.card {
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.card-header {
-    border-radius: 10px 10px 0 0 !important;
-}
-
-.table th {
-    font-weight: 600;
-    border-bottom: 2px solid #dee2e6;
-}
-
-.badge {
-    padding: 0.5em 0.8em;
-}
-
-.table tbody tr {
-    transition: background-color 0.2s ease;
-}
-
-.table tbody tr:hover {
-    background-color: #f8f9fa;
-}
-</style>
 {% endblock %}

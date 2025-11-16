@@ -1,0 +1,25 @@
+.bg-gradient-primary {
+        background: linear-gradient(135deg, #c82333 0%, #c82333 100%);
+    }
+    
+    .material-content {
+        background: #f8f9fa;
+        padding: 2rem;
+        border-radius: 8px;
+        border-left: 4px solid #dc3545;
+    }
+    
+    .content-text {
+        font-size: 1.05rem;
+        line-height: 1.8;
+        color: #333;
+    }
+    
+    .card {
+        border-radius: 12px;
+        border: none;
+    }
+    
+    .alert {
+        border-radius: 8px;
+    }

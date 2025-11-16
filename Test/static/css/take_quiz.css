@@ -1,0 +1,11 @@
+.hover-effect {
+    transition: all 0.2s;
+    cursor: pointer;
+}
+.hover-effect:hover {
+    background-color: #f8f9fa;
+    border-color: #dc3545 !important;
+}
+.form-check-input:checked ~ .form-check-label {
+    font-weight: bold;
+}

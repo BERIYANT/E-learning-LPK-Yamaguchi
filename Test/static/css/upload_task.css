@@ -1,0 +1,7 @@
+.card { box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075); }
+.card-header { font-weight: 600; }
+.alert { border-left: 4px solid; }
+.alert-danger { border-left-color: #dc3545; }
+.alert-success { border-left-color: #198754; }
+.alert-info { border-left-color: #0dcaf0; }
+.alert-warning { border-left-color: #ffc107; }

@@ -1,0 +1,72 @@
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+            .stat-card { background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-left: 4px solid; }
+            .stat-card h3 { color: #7f8c8d; font-size: 0.9rem; margin-bottom: 0.5rem; text-transform: uppercase; }
+            .stat-card .number { font-size: 2.5rem; font-weight: bold; color: #2c3e50; }
+            .stat-card.blue { border-color: #3498db; }
+            .stat-card.blue .number { color: #3498db; }
+            .stat-card.green { border-color: #27ae60; }
+            .stat-card.green .number { color: #27ae60; }
+            .stat-card.orange { border-color: #f39c12; }
+            .stat-card.orange .number { color: #f39c12; }
+            .stat-card.purple { border-color: #9b59b6; }
+            .stat-card.purple .number { color: #9b59b6; }
+            .stat-card.red { border-color: #e74c3c; }
+            .stat-card.red .number { color: #e74c3c; }
+            .stat-card.teal { border-color: #1abc9c; }
+            .stat-card.teal .number { color: #1abc9c; }
+            .quick-actions { margin-top: 2rem; }
+            .actions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem; }
+            .action-card { padding: 1.5rem; text-align: center; border-radius: 8px; color: white; text-decoration: none; display: block; transition: transform 0.3s; }
+            .action-card:hover { transform: translateY(-3px); text-decoration: none; color: white; }
+            .action-card h5 { margin-bottom: 0.5rem; font-size: 1.1rem; }
+            .action-card p { margin: 0; font-size: 0.9rem; opacity: 0.9; }
+
+.btn-group .btn {
+    margin-left: 0;
+}
+
+/* Tombol Akses Cepat */
+.btn-lg {
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-lg:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* Card Styling */
+.card {
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+/* Badge Styling */
+.badge {
+    font-size: 0.75rem;
+    padding: 0.35em 0.65em;
+    font-weight: 600;
+}
+
+.badge i {
+    font-size: 0.9em;
+}
+
+/* List Group Item Enhanced */
+.list-group-item {
+    transition: background-color 0.2s ease;
+}
+
+.list-group-item:hover {
+    background-color: #f8f9fa;
+}
+
+/* Gap utility for older Bootstrap versions */
+.gap-2 {
+    gap: 0.5rem;
+}

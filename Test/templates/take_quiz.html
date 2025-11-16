@@ -2,6 +2,11 @@
 
 {% block title %}Mengerjakan Kuis{% endblock %}
 
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/take_quiz.css') }}">
+{% endblock %}
+
 {% block content %}
 <div class="container mt-4">
     <div class="row justify-content-center">
@@ -142,25 +147,9 @@
     </div>
 </div>
 
-<style>
-.hover-effect {
-    transition: all 0.2s;
-    cursor: pointer;
-}
-.hover-effect:hover {
-    background-color: #f8f9fa;
-    border-color: #dc3545 !important;
-}
-.form-check-input:checked ~ .form-check-label {
-    font-weight: bold;
-}
-</style>
 
-<script>
-function openImageModal(src) {
-    document.getElementById('modalImage').src = src;
-    const modal = new bootstrap.Modal(document.getElementById('imageModal'));
-    modal.show();
-}
-</script>
+{% block extra_js %}
+  <script src="{{ url_for('static', filename='js/take_quiz.js') }}"></script>
+{% endblock %}
+
 {% endblock %}
