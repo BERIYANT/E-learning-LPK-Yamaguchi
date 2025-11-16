@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}Kelola Sertifikat{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="fas fa-certificate text-warning"></i> Kelola Sertifikat</h2>
+            <p class="text-muted">Manajemen sertifikat untuk siswa</p>
+        </div>
+        <div class="col-auto">
+            <a href="{{ url_for('create_certificate') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Buat Sertifikat Baru
+            </a>
+        </div>
+    </div>
+
+    {% if certificates %}
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>No</th>
+                            <th>Nomor Sertifikat</th>
+                            <th>Nama Siswa</th>
+                            <th>Kelas</th>
+                            <th>Tanggal Terbit</th>
+                            <th>File</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cert in certificates %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>
+                                <span class="badge bg-primary">{{ cert.certificate_number }}</span>
+                            </td>
+                            <td>
+                                <strong>{{ cert.full_name or cert.username }}</strong>
+                                <br>
+                                <small class="text-muted">@{{ cert.username }}</small>
+                            </td>
+                            <td>
+                                {% if cert.class_name %}
+                                <span class="badge bg-info">{{ cert.class_name }}</span>
+                                {% else %}
+                                <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <small>
+                                    <i class="fas fa-calendar"></i>
+                                    {{ cert.issued_at.strftime('%d/%m/%Y') }}
+                                </small>
+                            </td>
+                            <td>
+                                {% if cert.file_path %}
+                                <a href="{{ url_for('download_file', filename=cert.file_path|normalize_path) }}" 
+                                   class="btn btn-sm btn-success" 
+                                   target="_blank"
+                                   data-bs-toggle="tooltip"
+                                   title="Download file sertifikat">
+                                    <i class="fas fa-file-download"></i>
+                                </a>
+                                {% else %}
+                                <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <a href="{{ url_for('view_certificate', cert_id=cert.id) }}" 
+                                       class="btn btn-info"
+                                       data-bs-toggle="tooltip"
+                                       title="Lihat detail">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{{ url_for('edit_certificate', cert_id=cert.id) }}" 
+                                       class="btn btn-warning"
+                                       data-bs-toggle="tooltip"
+                                       title="Edit sertifikat">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="{{ url_for('delete_certificate', cert_id=cert.id) }}" 
+                                       class="btn btn-danger"
+                                       data-bs-toggle="tooltip"
+                                       title="Hapus sertifikat"
+                                       onclick="return confirm('Apakah Anda yakin ingin menghapus sertifikat ini?')">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i> Belum ada sertifikat. 
+        <a href="{{ url_for('create_certificate') }}" class="alert-link">Buat sertifikat pertama</a>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+// Initialize Bootstrap tooltips
+document.addEventListener('DOMContentLoaded', function() {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+});
+</script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Kuis{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-warning text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-edit"></i> Edit Kuis
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Judul Kuis <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="title" name="title" 
+                                   value="{{ quiz.title }}" required>
+                            <div class="form-text">Berikan judul yang jelas untuk kuis ini</div>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>Catatan:</strong> Setelah mengubah judul kuis, Anda dapat mengelola pertanyaan melalui menu "Kelola Pertanyaan".
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fas fa-save"></i> Simpan Perubahan
+                            </button>
+                            <a href="{{ url_for('add_question', qid=quiz.id) }}" class="btn btn-primary">
+                                <i class="fas fa-question-circle"></i> Kelola Pertanyaan
+                            </a>
+                            <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Kembali
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Info Kuis -->
+            <div class="card shadow mt-3">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle"></i> Informasi Kuis
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>ID Kuis:</strong> {{ quiz.id }}</p>
+                            <p><strong>Dibuat pada:</strong> {{ quiz.created_at.strftime('%d %B %Y, %H:%M') if quiz.created_at else '-' }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Total Pertanyaan:</strong> 
+                                <span class="badge bg-info">
+                                    {% if quiz.total_questions %}
+                                        {{ quiz.total_questions }}
+                                    {% else %}
+                                        0
+                                    {% endif %}
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

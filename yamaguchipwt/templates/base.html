@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}LPK YAMAGUCHI PURWOKERTO{% endblock %}</title>
+
+  <!-- Bootstrap 5 Local -->
+  <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+  <!-- Font Awesome Local -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/fontawesome.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/solid.min.css') }}">
+
+  <style>
+    body { 
+      background-color: #f8f9fa;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+    
+    .navbar-brand { 
+      font-weight: bold; 
+      font-size: 1.5rem;
+      letter-spacing: 0.5px;
+    }
+    
+    .navbar-brand img {
+      border-radius: 50%;
+      border: 2px solid white;
+      object-fit: cover;
+      width: 50px;
+      height: 50px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    /* Custom Red Theme */
+    .bg-primary { 
+      background-color: #c82333 !important; 
+    }
+    
+    .text-primary { 
+      color: #c82333 !important; 
+    }
+    
+    .btn-primary { 
+      background-color: #dc3545 !important; 
+      border-color: #dc3545 !important;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover { 
+      background-color: #bb2d3b !important; 
+      border-color: #b02a37 !important;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+    }
+    
+    .badge.bg-danger { 
+      background-color: #dc3545 !important; 
+    }
+    
+    .badge.bg-success { 
+      background-color: #198754 !important; 
+    }
+    
+    .badge.bg-info { 
+      background-color: #0dcaf0 !important; 
+    }
+    
+    .nav-link.text-white:hover {
+      color: #ffe5e5 !important;
+      transition: color 0.3s ease;
+    }
+
+    .navbar .dropdown-toggle {
+      font-weight: 500;
+    }
+
+    /* Alert Animations */
+    .alert {
+      animation: slideDown 0.3s ease-out;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Dropdown Menu Style */
+    .dropdown-menu {
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      border: none;
+    }
+
+    .dropdown-item {
+      padding: 0.7rem 1.5rem;
+      transition: background-color 0.2s ease;
+    }
+
+    .dropdown-item:hover {
+      background-color: #f8f9fa;
+    }
+
+    .dropdown-item.text-danger:hover {
+      background-color: #ffe5e5;
+    }
+
+    .dropdown-header {
+      color: #6c757d;
+      font-weight: 600;
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Content Container */
+    .container.mt-4 {
+      min-height: calc(100vh - 200px);
+    }
+
+    /* Button Login Style */
+    .btn-light {
+      transition: all 0.3s ease;
+    }
+
+    .btn-light:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+
+    /* Navbar Toggle */
+    .navbar-toggler:focus {
+      box-shadow: none;
+    }
+
+    /* Logo Error Handling */
+    .navbar-brand img[style*="display:none"] ~ span {
+      display: inline-block;
+    }
+  </style>
+
+  {% block extra_css %}{% endblock %}
+</head>
+<body class="bg-light">
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+      <a class="navbar-brand fw-bold d-flex align-items-center" href="{{ url_for('index') }}">
+        <img src="{{ url_for('static', filename='images/logo_yamaguchi.png') }}" 
+             alt="Logo LPK Yamaguchi" 
+             class="me-2"
+             onerror="this.style.display='none';">
+        <span>LPK YAMAGUCHI</span>
+      </a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          {% if g.user %}
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-user-circle"></i> {{ g.user.full_name or g.user.username }} 
+                {% if g.user.role == 'admin' %}
+                  <span class="badge bg-danger">Admin</span>
+                {% elif g.user.role == 'sensei' %}
+                  <span class="badge bg-success">Sensei</span>
+                {% else %}
+                  <span class="badge bg-info">Siswa</span>
+                {% endif %}
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="{{ url_for('dashboard') }}">
+                  <i class="fas fa-home"></i> Dashboard
+                </a></li>
+                <li><a class="dropdown-item" href="{{ url_for('profile') }}">
+                  <i class="fas fa-user"></i> Profil
+                </a></li>
+                
+                {% if g.user.role == 'student' %}
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="{{ url_for('my_certificates') }}">
+                  <i class="fas fa-certificate"></i> Sertifikat Saya
+                </a></li>
+                {% endif %}
+
+                {% if g.user.role == 'admin' %}
+                <li><hr class="dropdown-divider"></li>
+                <li><h6 class="dropdown-header">Menu Admin</h6></li>
+                <li><a class="dropdown-item" href="{{ url_for('admin_certificates') }}">
+                  <i class="fas fa-certificate"></i> Kelola Sertifikat
+                </a></li>
+                <li><a class="dropdown-item" href="{{ url_for('admin_users') }}">
+                  <i class="fas fa-users"></i> Monitoring Pengguna
+                </a></li>
+                <li><a class="dropdown-item" href="{{ url_for('admin_activities') }}">
+                  <i class="fas fa-chart-line"></i> Log Aktivitas
+                </a></li>
+                {% endif %}
+                
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item text-danger" href="{{ url_for('logout') }}">
+                  <i class="fas fa-sign-out-alt"></i> Logout
+                </a></li>
+              </ul>
+            </li>
+          {% else %}
+            <li class="nav-item">
+              <a href="{{ url_for('login') }}" class="btn btn-light px-4 py-2 rounded-pill">
+                <i class="fas fa-sign-in-alt"></i> Login
+              </a>
+            </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Flash messages -->
+  <div class="container mt-3">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, msg in messages %}
+          <div class="alert alert-{{ 'success' if category == 'success' else 'danger' if category == 'error' else 'warning' if category == 'warning' else 'info' }} alert-dismissible fade show" role="alert">
+            {{ msg }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
+
+  <!-- Main content -->
+  <div class="container mt-4 mb-5">
+    {% block content %}{% endblock %}
+  </div>
+
+  <!-- Footer (optional) -->
+  <footer class="bg-dark text-white text-center py-3 mt-5">
+    <div class="container">
+      <p class="mb-0">&copy; 2025 LPK Yamaguchi Purwokerto. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS Local -->
+  <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+  
+  <!-- Custom JS -->
+  <script>
+    // Auto-dismiss alerts after 5 seconds
+    document.addEventListener('DOMContentLoaded', function() {
+      const alerts = document.querySelectorAll('.alert');
+      alerts.forEach(function(alert) {
+        setTimeout(function() {
+          const bsAlert = new bootstrap.Alert(alert);
+          bsAlert.close();
+        }, 5000);
+      });
+    });
+  </script>
+  
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

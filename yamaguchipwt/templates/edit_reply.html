@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Balasan - Forum Diskusi{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('forum') }}">Forum Diskusi</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('view_post', post_id=reply.post_id) }}">Kembali ke Topik</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Edit Balasan</li>
+        </ol>
+    </nav>
+
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">
+                <i class="fas fa-edit"></i> Edit Balasan
+            </h4>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-info mb-4">
+                <i class="fas fa-info-circle"></i>
+                <strong>Info:</strong> Anda sedang mengedit balasan Anda. Pastikan isi balasan tetap relevan dengan topik diskusi.
+            </div>
+
+            <form method="POST" action="{{ url_for('edit_reply', reply_id=reply.id) }}">
+                <div class="mb-3">
+                    <label for="body" class="form-label">
+                        Isi Balasan <span class="text-danger">*</span>
+                    </label>
+                    <textarea class="form-control" id="body" name="body" rows="8" 
+                              placeholder="Tulis balasan Anda di sini..." required>{{ reply.body }}</textarea>
+                    <div class="form-text">
+                        <i class="fas fa-lightbulb"></i> 
+                        Pastikan balasan Anda sopan, relevan, dan bermanfaat untuk diskusi.
+                    </div>
+                </div>
+
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <strong>Perhatian:</strong> Perubahan akan langsung terlihat oleh semua pengguna dan akan ditandai sebagai "diedit".
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Simpan Perubahan
+                    </button>
+                    <a href="{{ url_for('view_post', post_id=reply.post_id) }}" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> Batal
+                    </a>
+                </div>
+            </form>
+        </div>
+        
+        <div class="card-footer bg-light">
+            <small class="text-muted">
+                <i class="fas fa-clock"></i> 
+                Balasan asli dibuat pada: 
+                <strong>{{ reply.created_at.strftime('%d %B %Y, %H:%M') if reply.created_at else '-' }}</strong>
+            </small>
+        </div>
+    </div>
+
+    <!-- Tip Box -->
+    <div class="card mt-3 border-info">
+        <div class="card-body bg-light">
+            <h6 class="text-info">
+                <i class="fas fa-lightbulb"></i> Tips untuk Balasan yang Baik:
+            </h6>
+            <ul class="mb-0">
+                <li>Gunakan bahasa yang sopan dan mudah dipahami</li>
+                <li>Berikan informasi yang akurat dan relevan</li>
+                <li>Hormati pendapat orang lain</li>
+                <li>Hindari spam atau konten yang tidak pantas</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<style>
+.form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.alert {
+    border-left: 4px solid;
+}
+
+.alert-info {
+    border-left-color: #0dcaf0;
+}
+
+.alert-warning {
+    border-left-color: #ffc107;
+}
+
+.btn {
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+</style>
+{% endblock %}

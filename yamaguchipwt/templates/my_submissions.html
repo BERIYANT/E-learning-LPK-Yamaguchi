@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Tugas Saya{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">
+                <i class="fas fa-file-upload"></i> Daftar Upload Tugas Saya
+            </h4>
+        </div>
+        <div class="card-body">
+            {% if submissions %}
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>No</th>
+                            <th>Judul Tugas</th>
+                            <th>File Upload</th>
+                            <th>Waktu Upload</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for sub in submissions %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td><strong>{{ sub.task_title }}</strong></td>
+                            <td>
+                                {% if sub.file_path %}
+                                    {% set clean_path = sub.file_path.replace('static/', '').replace('static\\', '').replace('\\', '/') %}
+                                    {% set filename = clean_path.split('/')[-1] %}
+                                    <small class="text-muted">{{ filename }}</small>
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ sub.submitted_at.strftime('%d/%m/%Y %H:%M') if sub.submitted_at else '-' }}</td>
+                            <td>
+                                {% if sub.score is not none %}
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-check"></i> Sudah Dinilai
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-warning">
+                                        <i class="fas fa-clock"></i> Menunggu
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if sub.file_path %}
+                                    {% set clean_path = sub.file_path.replace('static/', '').replace('static\\', '').replace('\\', '/') %}
+                                    {% if clean_path.startswith('uploads/') %}
+                                        <a href="{{ url_for('download_file', filename=clean_path.replace('uploads/', '')) }}" 
+                                           target="_blank" class="btn btn-sm btn-info">
+                                            <i class="fas fa-download"></i> Lihat File
+                                        </a>
+                                    {% else %}
+                                        <a href="{{ url_for('download_file', filename=clean_path) }}" 
+                                           target="_blank" class="btn btn-sm btn-info">
+                                            <i class="fas fa-download"></i> Lihat File
+                                        </a>
+                                    {% endif %}
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i> Anda belum mengupload tugas apapun.
+            </div>
+            {% endif %}
+
+            <div class="mt-4">
+                <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Kembali ke Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

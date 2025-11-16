@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{% block title %}Kelola Pertanyaan Kuis{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-question-circle"></i> Tambah Pertanyaan
+                    </h4>
+                    <small>Kuis: {{ quiz.title }}</small>
+                </div>
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="question" class="form-label">Pertanyaan <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="question" name="question" rows="3" required></textarea>
+                        </div>
+
+                        <!-- Upload Gambar Soal -->
+                        <div class="mb-3">
+                            <label for="image" class="form-label">
+                                <i class="fas fa-image"></i> Gambar Soal (Opsional)
+                            </label>
+                            <input type="file" class="form-control" id="image" name="image" accept="image/*" onchange="previewImage(this)">
+                            <small class="text-muted">Format: PNG, JPG, JPEG, GIF (Maksimal 4MB)</small>
+                            
+                            <!-- Preview Gambar -->
+                            <div id="imagePreview" class="mt-2" style="display: none;">
+                                <p class="mb-1"><strong>Preview:</strong></p>
+                                <img id="preview" src="" alt="Preview" class="img-fluid border rounded" style="max-width: 400px;">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Pilihan Jawaban <span class="text-danger">*</span></label>
+                            
+                            <div class="input-group mb-2">
+                                <span class="input-group-text bg-primary text-white" style="width: 50px;">A</span>
+                                <input type="text" class="form-control" name="a" placeholder="Opsi A" required>
+                            </div>
+
+                            <div class="input-group mb-2">
+                                <span class="input-group-text bg-success text-white" style="width: 50px;">B</span>
+                                <input type="text" class="form-control" name="b" placeholder="Opsi B" required>
+                            </div>
+
+                            <div class="input-group mb-2">
+                                <span class="input-group-text bg-warning text-dark" style="width: 50px;">C</span>
+                                <input type="text" class="form-control" name="c" placeholder="Opsi C" required>
+                            </div>
+
+                            <div class="input-group mb-2">
+                                <span class="input-group-text bg-info text-white" style="width: 50px;">D</span>
+                                <input type="text" class="form-control" name="d" placeholder="Opsi D" required>
+                            </div>
+
+                            <div class="input-group mb-2">
+                                <span class="input-group-text bg-danger text-white" style="width: 50px;">E</span>
+                                <input type="text" class="form-control" name="e" placeholder="Opsi E" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="correct" class="form-label">Jawaban yang Benar <span class="text-danger">*</span></label>
+                            <select class="form-select" id="correct" name="correct" required>
+                                <option value="">-- Pilih Jawaban Benar --</option>
+                                <option value="a">A</option>
+                                <option value="b">B</option>
+                                <option value="c">C</option>
+                                <option value="d">D</option>
+                                <option value="e">E</option>
+                            </select>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Tambah Pertanyaan
+                            </button>
+                            <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+                                <i class="fas fa-check"></i> Selesai
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list"></i> Daftar Pertanyaan
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if questions %}
+                        <div class="list-group">
+                            {% for q in questions %}
+                            <div class="list-group-item">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1">
+                                            {{ loop.index }}. {{ q.question[:50] }}{% if q.question|length > 50 %}...{% endif %}
+                                            {% if q.image_path %}
+                                                <i class="fas fa-image text-primary ms-1" title="Memiliki gambar"></i>
+                                            {% endif %}
+                                        </h6>
+                                        <small class="text-muted">Jawaban: {{ q.correct_option|upper }}</small>
+                                    </div>
+                                    <div class="btn-group btn-group-sm ms-2">
+                                        <a href="{{ url_for('edit_question', qid=quiz.id, qid_q=q.id) }}" 
+                                           class="btn btn-warning btn-sm" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="{{ url_for('delete_question', qid=quiz.id, qid_q=q.id) }}" 
+                                           class="btn btn-danger btn-sm" 
+                                           onclick="return confirm('Hapus pertanyaan ini?')" title="Hapus">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info mb-0">
+                            <i class="fas fa-info-circle"></i> Belum ada pertanyaan. Silakan tambahkan pertanyaan pertama.
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="card-footer text-muted">
+                    Total: <strong>{{ questions|length }}</strong> pertanyaan
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function previewImage(input) {
+    const preview = document.getElementById('preview');
+    const previewDiv = document.getElementById('imagePreview');
+    
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+            previewDiv.style.display = 'block';
+        }
+        
+        reader.readAsDataURL(input.files[0]);
+    } else {
+        previewDiv.style.display = 'none';
+    }
+}
+</script>
+{% endblock %}

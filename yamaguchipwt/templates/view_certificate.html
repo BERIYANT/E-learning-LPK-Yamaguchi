@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+
+{% block title %}Detail Sertifikat{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="fas fa-certificate text-warning"></i> Detail Sertifikat</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                    {% if g.user.role == 'admin' %}
+                    <li class="breadcrumb-item"><a href="{{ url_for('admin_certificates') }}">Kelola Sertifikat</a></li>
+                    {% else %}
+                    <li class="breadcrumb-item"><a href="{{ url_for('my_certificates') }}">Sertifikat Saya</a></li>
+                    {% endif %}
+                    <li class="breadcrumb-item active">Detail</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow">
+                <div class="card-header bg-warning text-dark">
+                    <h4 class="mb-0">
+                        <i class="fas fa-award"></i> Sertifikat Penghargaan
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-3 text-md-end">
+                            <strong>Nomor Sertifikat:</strong>
+                        </div>
+                        <div class="col-md-9">
+                            <span class="badge bg-primary fs-6">{{ cert.certificate_number }}</span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-3 text-md-end">
+                            <strong>Nama Siswa:</strong>
+                        </div>
+                        <div class="col-md-9">
+                            <h5>{{ cert.full_name or cert.username }}</h5>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-3 text-md-end">
+                            <strong>Username:</strong>
+                        </div>
+                        <div class="col-md-9">
+                            @{{ cert.username }}
+                        </div>
+                    </div>
+
+                    {% if cert.class_name %}
+                    <div class="row mb-3">
+                        <div class="col-md-3 text-md-end">
+                            <strong>Kelas:</strong>
+                        </div>
+                        <div class="col-md-9">
+                            <span class="badge bg-info">{{ cert.class_name }}</span>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <div class="row mb-3">
+                        <div class="col-md-3 text-md-end">
+                            <strong>Tanggal Diterbitkan:</strong>
+                        </div>
+                        <div class="col-md-9">
+                            <i class="fas fa-calendar-alt"></i> {{ cert.issued_at.strftime('%d %B %Y') }}
+                        </div>
+                    </div>
+
+                    {% if cert.description %}
+                    <div class="row mb-3">
+                        <div class="col-md-3 text-md-end">
+                            <strong>Deskripsi:</strong>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="alert alert-light border">
+                                {{ cert.description }}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if cert.file_path %}
+                    <hr class="my-4">
+                    <div class="row mb-3">
+                        <div class="col-md-3 text-md-end">
+                            <strong>File Sertifikat:</strong>
+                        </div>
+                        <div class="col-md-9">
+                            <!-- ⬇️ PERBAIKAN: Gunakan route baru download_certificate_file -->
+                            <a href="{{ url_for('download_certificate_file', cert_id=cert.id) }}" 
+                               class="btn btn-success btn-lg" 
+                               target="_blank">
+                                <i class="fas fa-download"></i> Download Sertifikat
+                            </a>
+                            
+                            {% set file_ext = cert.file_path.split('.')[-1].lower() %}
+                            
+                            <!-- Preview untuk gambar -->
+                            {% if file_ext in ['jpg', 'jpeg', 'png', 'gif'] %}
+                            <div class="mt-4">
+                                <div class="card">
+                                    <div class="card-header bg-light">
+                                        <h6 class="mb-0"><i class="fas fa-image"></i> Preview Sertifikat</h6>
+                                    </div>
+                                    <div class="card-body text-center">
+                                        <!-- ⬇️ PERBAIKAN: Gunakan route download untuk preview gambar -->
+                                        <img src="{{ url_for('download_certificate_file', cert_id=cert.id) }}" 
+                                             alt="Sertifikat {{ cert.certificate_number }}" 
+                                             class="img-fluid border rounded shadow"
+                                             style="max-width: 100%; height: auto; max-height: 800px;">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Preview untuk PDF -->
+                            {% elif file_ext == 'pdf' %}
+                            <div class="mt-4">
+                                <div class="card">
+                                    <div class="card-header bg-light">
+                                        <h6 class="mb-0"><i class="fas fa-file-pdf"></i> Preview PDF</h6>
+                                    </div>
+                                    <div class="card-body p-0">
+                                        <!-- ⬇️ PERBAIKAN: Gunakan route download untuk preview PDF -->
+                                        <embed src="{{ url_for('download_certificate_file', cert_id=cert.id) }}" 
+                                               type="application/pdf" 
+                                               width="100%" 
+                                               height="800px" 
+                                               class="border-0">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Untuk file lainnya -->
+                            {% else %}
+                            <div class="mt-3">
+                                <div class="alert alert-info">
+                                    <i class="fas fa-file-alt"></i> 
+                                    File terlampir: <strong>{{ cert.file_path.split('/')[-1] }}</strong>
+                                    <br>
+                                    <small>Klik tombol download untuk melihat file.</small>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <hr class="my-4">
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-between">
+                        <a href="{% if g.user.role == 'admin' %}{{ url_for('admin_certificates') }}{% else %}{{ url_for('my_certificates') }}{% endif %}" 
+                           class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Kembali
+                        </a>
+                        
+                        {% if g.user.role == 'admin' %}
+                        <div>
+                            <a href="{{ url_for('edit_certificate', cert_id=cert.id) }}" class="btn btn-warning">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <a href="{{ url_for('delete_certificate', cert_id=cert.id) }}" 
+                               class="btn btn-danger"
+                               onclick="return confirm('Apakah Anda yakin ingin menghapus sertifikat ini?')">
+                                <i class="fas fa-trash"></i> Hapus
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+{% endblock %}
