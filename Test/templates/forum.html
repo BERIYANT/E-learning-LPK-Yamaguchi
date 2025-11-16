@@ -39,7 +39,7 @@
                         </div>
                         <div class="col-md-4">
                             <form method="GET" action="{{ url_for('forum') }}">
-                                <select class="form-select" name="sort" onchange="this.form.submit()">
+                                <select class="form-select" name="sort">
                                     <option value="latest" {% if request.args.get('sort') == 'latest' %}selected{% endif %}>Terbaru</option>
                                     <option value="oldest" {% if request.args.get('sort') == 'oldest' %}selected{% endif %}>Terlama</option>
                                     <option value="popular" {% if request.args.get('sort') == 'popular' %}selected{% endif %}>Terpopuler</option>

@@ -87,8 +87,7 @@
                                     <a href="{{ url_for('delete_certificate', cert_id=cert.id) }}" 
                                        class="btn btn-danger"
                                        data-bs-toggle="tooltip"
-                                       title="Hapus sertifikat"
-                                       onclick="return confirm('Apakah Anda yakin ingin menghapus sertifikat ini?')">
+                                       title="Hapus sertifikat" data-confirm="Apakah Anda yakin ingin menghapus?">
                                         <i class="fas fa-trash"></i>
                                     </a>
                                 </div>
@@ -108,15 +107,7 @@
     {% endif %}
 </div>
 
-<script>
-// Initialize Bootstrap tooltips
-document.addEventListener('DOMContentLoaded', function() {
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
-    });
-});
-</script>
+
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 {% endblock %}

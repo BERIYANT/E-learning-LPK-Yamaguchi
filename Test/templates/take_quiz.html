@@ -7,7 +7,7 @@
     <div class="row justify-content-center">
         <div class="col-md-10">
             <div class="card shadow">
-                <div class="card-header" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
+                <div class="card-header">
                     <h4 class="mb-0 text-white">
                         <i class="fas fa-pencil-alt"></i> Mengerjakan Kuis
                     </h4>
@@ -39,11 +39,9 @@
                                             {% set normalized_path = q.image_path | normalize_path %}
                                             <img src="{{ url_for('static', filename='uploads/' ~ normalized_path) }}" 
                                                  alt="Gambar Soal {{ loop.index }}" 
-                                                 class="img-fluid rounded"
-                                                 style="max-width: 100%; max-height: 400px; cursor: pointer;"
-                                                 onclick="openImageModal(this.src)"
+                                                 class="img-fluid rounded quiz-question-image"
                                                  title="Klik untuk memperbesar"
-                                                 onerror="console.error('Gagal load gambar:', this.src); this.parentElement.innerHTML='<div class=alert alert-danger>Gambar tidak dapat dimuat</div>'">
+                                                 onclick="openImageModal(this.src)">
                                         </div>
                                         <p class="text-muted mb-0 mt-1">
                                             <small><i class="fas fa-search-plus"></i> Klik gambar untuk memperbesar</small>
@@ -102,9 +100,7 @@
                             {% endfor %}
 
                             <div class="d-grid gap-2 mt-4">
-                                <button type="submit" class="btn btn-lg text-white" 
-                                        style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); border: none;"
-                                        onclick="return confirm('Yakin ingin submit kuis ini?')">
+                                <button type="submit" class="btn btn-lg text-white submit-quiz-btn" data-quiz-submit>
                                     <i class="fas fa-paper-plane"></i> Submit Kuis
                                 </button>
                                 <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
@@ -142,25 +138,7 @@
     </div>
 </div>
 
-<style>
-.hover-effect {
-    transition: all 0.2s;
-    cursor: pointer;
-}
-.hover-effect:hover {
-    background-color: #f8f9fa;
-    border-color: #dc3545 !important;
-}
-.form-check-input:checked ~ .form-check-label {
-    font-weight: bold;
-}
-</style>
 
-<script>
-function openImageModal(src) {
-    document.getElementById('modalImage').src = src;
-    const modal = new bootstrap.Modal(document.getElementById('imageModal'));
-    modal.show();
-}
-</script>
+
+
 {% endblock %}

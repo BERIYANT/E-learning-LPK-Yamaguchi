@@ -100,6 +100,116 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // ==========================================
+    // LOGIN FORM SECURITY
+    // ==========================================
+    
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+        const submitBtn = document.getElementById('submitBtn');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        
+        // Rate limiting
+        let loginAttempts = parseInt(localStorage.getItem('loginAttempts') || '0');
+        let lastAttempt = parseInt(localStorage.getItem('lastLoginAttempt') || '0');
+        const MAX_ATTEMPTS = 5;
+        const LOCKOUT_TIME = 5 * 60 * 1000; // 5 minutes
+        
+        function isLockedOut() {
+            const now = Date.now();
+            if (loginAttempts >= MAX_ATTEMPTS) {
+                if (now - lastAttempt < LOCKOUT_TIME) {
+                    return true;
+                } else {
+                    loginAttempts = 0;
+                    localStorage.setItem('loginAttempts', '0');
+                    return false;
+                }
+            }
+            return false;
+        }
+        
+        // Show lockout warning
+        if (isLockedOut()) {
+            const warning = document.getElementById('rateLimitWarning');
+            if (warning) {
+                warning.classList.remove('d-none');
+            }
+            if (submitBtn) {
+                submitBtn.disabled = true;
+            }
+            
+            setTimeout(function() {
+                loginAttempts = 0;
+                localStorage.setItem('loginAttempts', '0');
+                if (warning) warning.classList.add('d-none');
+                if (submitBtn) submitBtn.disabled = false;
+            }, LOCKOUT_TIME - (Date.now() - lastAttempt));
+        }
+        
+        loginForm.addEventListener('submit', function(e) {
+            if (isLockedOut()) {
+                e.preventDefault();
+                alert('Terlalu banyak percobaan login gagal. Silakan tunggu 5 menit.');
+                return false;
+            }
+            
+            // Sanitize inputs
+            if (usernameInput) {
+                usernameInput.value = sanitizeInput(usernameInput.value.trim());
+            }
+            
+            // Check honeypot
+            const honeypot = document.querySelector('input[name="website"]');
+            if (honeypot && honeypot.value) {
+                e.preventDefault();
+                console.warn('Bot detected');
+                return false;
+            }
+            
+            // Validate inputs
+            if (usernameInput && !usernameInput.value.trim()) {
+                e.preventDefault();
+                alert('Username tidak boleh kosong');
+                usernameInput.focus();
+                return false;
+            }
+            
+            if (passwordInput && passwordInput.value.length < 6) {
+                e.preventDefault();
+                alert('Password minimal 6 karakter');
+                passwordInput.focus();
+                return false;
+            }
+            
+            // Disable button to prevent double submit
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
+            }
+            
+            // Increment attempt counter
+            loginAttempts++;
+            lastAttempt = Date.now();
+            localStorage.setItem('loginAttempts', loginAttempts.toString());
+            localStorage.setItem('lastLoginAttempt', lastAttempt.toString());
+            
+            return true;
+        });
+        
+        // Clear password on page unload
+        window.addEventListener('beforeunload', function() {
+            if (passwordInput) passwordInput.value = '';
+        });
+        
+        // Reset attempts on successful login
+        if (window.location.search.includes('success')) {
+            localStorage.removeItem('loginAttempts');
+            localStorage.removeItem('lastLoginAttempt');
+        }
+    }
+    
+    // ==========================================
     // ROLE SELECT HANDLERS
     // ==========================================
     

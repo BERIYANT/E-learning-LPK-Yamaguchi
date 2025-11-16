@@ -460,6 +460,29 @@
     display: none;
 }
 
+/* Security: Hide honeypot field completely */
+input[name="website"] {
+    position: absolute !important;
+    left: -9999px !important;
+    width: 1px !important;
+    height: 1px !important;
+    opacity: 0 !important;
+}
+
+/* Improve focus visibility for accessibility */
+input:focus,
+button:focus,
+#togglePassword:focus {
+    outline: 2px solid #0d6efd;
+    outline-offset: 2px;
+}
+
+/* Disabled button style */
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
 /* =========================
    TAKE QUIZ STYLES
    ========================= */
