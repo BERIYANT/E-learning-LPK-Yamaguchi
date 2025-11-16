@@ -11,6 +11,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <!-- Base CSS - PENTING: Load setelah Bootstrap agar override warna primary jadi merah -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+  <!-- Custom CSS - All inline styles -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
 
   {% block extra_css %}{% endblock %}
 </head>
@@ -23,8 +25,8 @@
         <!-- Opsi 1: Gunakan nama file tanpa spasi -->
         <img src="{{ url_for('static', filename='images/logo_yamaguchi.png') }}" 
              alt="Logo LPK Yamaguchi" 
-             class="me-2"
-             onerror="this.onerror=null; this.src='{{ url_for('static', filename='images/default-logo.png') }}'; this.style.display='none';">
+             class="me-2 logo-image"
+             data-fallback="{{ url_for('static', filename='images/default-logo.png') }}">
         LPK YAMAGUCHI
       </a>
 
@@ -114,6 +116,8 @@
 
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Custom JS - All inline JavaScript -->
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
   {% block extra_js %}{% endblock %}
 </body>
 </html>
